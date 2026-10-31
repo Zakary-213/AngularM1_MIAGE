@@ -100,6 +100,8 @@ Dans un terminal placé dans `backend`, `npm start` lance le serveur avec son fi
 
 **Preuve.** Profil chargé sur le compte de démonstration et lien de déconnexion visible :
 
+**Profil et navigation connectée.** J’ai ouvert mon profil sur le compte de démonstration. Je retrouve mon nom, mon adresse et ma date d’inscription, ainsi que le lien Déconnexion. La ligne `me` apparaît dans Network, mais ses détails sont repliés sur cette première capture. Les images détaillées plus bas permettent de lire la méthode et le statut.
+
 ![Profil chargé et lien Déconnexion](captures/tp1-profil.png)
 
 ### Où s’effectue la mise à jour du profil ?
@@ -169,17 +171,31 @@ Le dernier scénario vérifie la réaction à un JWT rejeté par le serveur. Il 
 
 **Preuve HTTP détaillée.** [Journal JSON des requêtes et réponses réelles, expurgé](captures/tp1-requetes-reelles.json). Chaque entrée indique méthode, URL, corps, statut, type de contenu et présence d’Authorization. Les heures du JSON sont en UTC. La capture ci-dessous montre sa présentation lisible, produite par le relais.
 
+**Lecture du journal HTTP.** J’ai regroupé les échanges de connexion et de profil dans ce journal. Pour chaque requête, je peux lire la méthode, l’URL, le statut et le corps expurgé. Les valeurs sensibles sont remplacées par `[MASQUÉ]`. Cette présentation vient du relais de vérification, les captures du véritable panneau Network sont présentées ensuite.
+
 ![Requêtes HTTP réellement observées : login 200 et 401, profil GET et PUT, JWT invalide](captures/tp1-requetes-reelles.jpg)
 
 **Captures de l’interface réelle.**
 
+Ces cinq captures montrent le résultat visible pour l’utilisateur, dans l’ordre des vérifications. Elles complètent les preuves HTTP : l’interface permet de constater la navigation et les messages affichés, tandis que les requêtes détaillées permettent de confirmer les échanges avec le serveur.
+
+**1. Connexion réussie.** J’ai utilisé le compte de démonstration et cliqué sur « Se connecter ». Après acceptation des identifiants par l’API, l’application m’a redirigé vers la bibliothèque. La capture montre cette page accessible et la navigation d’un utilisateur connecté, avec les liens Profil et Déconnexion.
+
 ![Connexion réussie et bibliothèque accessible](captures/tp1-login-reussi.jpg)
+
+**2. Connexion refusée.** Après déconnexion, j’ai essayé de me connecter avec un mauvais mot de passe. Je reste sur la page Connexion et le message « Identifiants incorrects » apparaît sous le formulaire. La réponse HTTP associée est un 401. Le mot de passe reste masqué dans le champ.
 
 ![Connexion refusée avec message explicite](captures/tp1-login-refuse.jpg)
 
+**3. Lecture du profil.** Après reconnexion, j’ai ouvert Profil et cliqué sur « Charger mon profil ». L’application a demandé les informations du compte avec `GET /api/users/me`. La capture montre le nom « Demo », l’adresse du compte de démonstration et la date d’inscription retournés par l’API. Le champ « Nouveau nom » est également rempli avec le nom actuel.
+
 ![Profil récupéré depuis l’API](captures/tp1-profil-lecture.jpg)
 
+**4. Modification du nom et persistance.** J’ai remplacé « Demo » par « Demo TP1 », puis cliqué sur « Enregistrer ». Cette action envoie `PUT /api/users/me` avec le nouveau nom. J’ai ensuite rechargé la page et demandé à nouveau le profil. La capture montre que « Demo TP1 » est toujours présent : la modification a été enregistrée côté serveur, elle ne concerne pas seulement le champ du formulaire. Après ce test, j’ai rétabli le nom « Demo ».
+
 ![Nom modifié et toujours présent après rechargement puis GET du profil](captures/tp1-profil-modifie.jpg)
+
+**5. Retour à la connexion après un JWT invalide.** Pour ce test, le relais local a remplacé le JWT d’une requête de profil par un jeton invalide. L’API a répondu 401 et l’intercepteur Angular a effacé la session puis redirigé vers `/login`. La capture montre la page Connexion et les liens Connexion et Inscription à la place de la navigation connectée. Cette image seule ne permet pas de connaître la cause de la redirection, le journal HTTP associé confirme le rejet du JWT.
 
 ![Retour à la connexion après le 401 du JWT invalide](captures/tp1-jwt-invalide-redirection.jpg)
 
@@ -195,15 +211,27 @@ Le 31 octobre 2026, après les premières preuves obtenues avec le relais, les t
 
 Les corps de login et la réponse de login contenant un JWT ne sont pas affichés dans ces images. Les structures JSON expurgées et la présence ou l’absence d’Authorization sont documentées dans le tableau du checkpoint et le journal du relais. Dans la capture Headers du profil, la valeur du Bearer est hors de la zone visible. Aucune valeur de JWT ou de mot de passe n’est affichée dans les nouvelles images. Les indicateurs rouges de DevTools incluent les erreurs attendues du test volontaire de connexion refusée, ces captures ne prétendent pas prouver une console sans erreur après un test de refus.
 
+**Connexion réussie dans Network.** J’ai envoyé le formulaire de connexion. La ligne `login` affiche 200, puis une requête de bibliothèque apparaît après la redirection. Je constate ainsi que l’authentification acceptée est suivie du chargement des pistes.
+
 ![Chrome Network : connexion réussie, login 200 et chargement de la bibliothèque](captures/tp1-network-login200.png)
+
+**Détails du login accepté.** J’ai sélectionné la requête `login`, puis ouvert Headers. Je peux lire l’URL `/api/auth/login`, la méthode POST et le statut 200 OK. Je laisse le corps contenant le mot de passe et la réponse contenant le JWT hors de cette capture.
 
 ![Chrome Headers : POST api/auth/login, URL et statut 200](captures/tp1-network-login200-details.png)
 
+**Détails du login refusé.** J’ai soumis un mauvais mot de passe après déconnexion. Dans Headers, je retrouve le même POST de connexion avec le statut 401 Unauthorized. Le formulaire reste affiché avec le message d’erreur, ce qui montre le résultat côté interface et côté HTTP.
+
 ![Chrome Headers : POST api/auth/login, statut 401 et message visible dans le formulaire](captures/tp1-network-login401-details.png)
+
+**Réponse du serveur après le refus.** J’ai ouvert Response sur cette requête en échec. Le JSON contient `Identifiants incorrects`, le même message que dans le formulaire. Je vérifie ainsi que l’interface reprend le message renvoyé par l’API.
 
 ![Chrome Response : JSON Identifiants incorrects après le login refusé](captures/tp1-network-login401-reponse.png)
 
+**Requête de lecture du profil.** J’ai cliqué sur Charger mon profil et sélectionné la requête `me`. Headers affiche GET `/api/users/me` et 200 OK. Le profil est visible à gauche, la valeur du JWT n’apparaît pas dans la zone capturée.
+
 ![Chrome Headers : GET api/users/me avec statut 200 et profil affiché](captures/tp1-network-profil200-details.png)
+
+**Données du profil reçues.** J’ai ouvert Response sur le GET du profil. Je retrouve les champs publics `id`, `name`, `email` et `createdAt`. Ils correspondent aux informations affichées dans la page et la réponse ne contient ni mot de passe ni JWT.
 
 ![Chrome Response : données publiques du profil retournées par l’API](captures/tp1-network-profil200-reponse.png)
 
@@ -225,7 +253,11 @@ Les corps de login et la réponse de login contenant un JWT ne sont pas affiché
 
 **Fichiers concernés.** `track.service.ts`, `tracks-page.ts` et `tracks-page.html`.
 
+**Affichage de la deuxième page.** J’ai utilisé le bouton Suivant pour passer à la page 2. Je vois deux pistes sur cette dernière page, sur un total de sept dans la réponse JSON. Le bouton Suivant est désactivé à la dernière page. La limite de cinq est un maximum par page, pas un nombre obligatoire de résultats.
+
 ![Page 2, bornes de navigation et réponse JSON](captures/tp2-pagination-page2.png)
+
+**Pagination envoyée au serveur.** J’ai ouvert les détails de la requête déclenchée par le changement de page. Je retrouve GET `/api/tracks?page=2&limit=5` avec le statut 200. Cette URL confirme que la page et la limite sont transmises à l’API.
 
 ![GET page=2 et limit=5 avec statut HTTP 200](captures/tp2-pagination-entetes.png)
 
@@ -283,11 +315,19 @@ Le backend renvoie volontairement 404 pour une piste absente **ou** appartenant 
 
 Les observations expurgées sont dans [captures/tp2-verifications-reelles.json](captures/tp2-verifications-reelles.json). Les valeurs des JWT et des mots de passe ne sont pas conservées dans ce fichier ni affichées dans les captures. Les lignes de login et de session du client restent repliées dans Network.
 
+**Comparaison des réponses de l’API.** J’ai lancé les contrôles avec un client de vérification séparé d’Angular. Network montre l’upload valide en 201, l’upload invalide en 400, puis deux lectures de la même piste en 200 et 404 selon le compte utilisé. Le journal expurgé précise l’identité utilisée pour chaque lecture.
+
 ![Chrome Network : upload 201, refus 400, audio propriétaire 200 et autre utilisateur 404](captures/tp2-network-controles.png)
+
+**Contenu de l’envoi volontairement invalide.** J’ai sélectionné le POST refusé et ouvert Payload. Je retrouve les deux champs multipart `audio` et `title`. Le fichier texte a été envoyé volontairement par le client de vérification pour tester le serveur sans passer par le blocage préalable d’Angular.
 
 ![Chrome Network : multipart audio et title du fichier volontairement invalide](captures/tp2-network-upload400-multipart.png)
 
+**Erreur de format renvoyée par le serveur.** J’ai ouvert Response sur le POST invalide. Le JSON affiche `Format audio non accepté`. Cette réponse, associée au 400 de la liste Network, confirme que le backend refuse le MIME du fichier texte.
+
 ![Chrome Network : réponse réelle Format audio non accepté](captures/tp2-network-upload400-reponse.png)
+
+**Lecture refusée à un autre compte.** J’ai sélectionné la seconde requête audio, envoyée avec le JWT du compte temporaire. Le serveur répond `Piste inconnue`. La comparaison avec la lecture 200 du propriétaire, sur la même piste avant nettoyage, permet de distinguer ce refus d’un simple fichier absent.
 
 ![Chrome Network : réponse Piste inconnue pour le second utilisateur](captures/tp2-network-autre-utilisateur404.png)
 
@@ -311,7 +351,11 @@ Les observations expurgées sont dans [captures/tp2-verifications-reelles.json](
 
 **Fichiers concernés.** `tracks-page.ts`, `tracks-page.html` et `tracks-page.css`.
 
+**Blocage local d’un fichier trop volumineux.** J’ai sélectionné un fichier synthétique de 26 000 000 octets. Le message indique le dépassement du seuil frontend de 25 000 000 octets et aucune requête d’upload n’est envoyée. Cette capture vérifie la validation locale, pas la limite Multer du serveur qui est légèrement différente.
+
 ![Fichier supérieur à 25 Mo rejeté sans requête réseau](captures/tp2-validation-taille.png)
+
+**Structure de l’upload réel.** J’ai envoyé un fichier audio et ouvert le détail de la requête dans Network. Le multipart contient le fichier sous le nom `audio` et le titre sous le nom `title`. Je vérifie ainsi que le service respecte les noms attendus par le backend.
 
 ![Upload réel multipart avec les champs audio et title](captures/tp2-upload-multipart.png)
 
@@ -333,7 +377,11 @@ Les observations expurgées sont dans [captures/tp2-verifications-reelles.json](
 
 **Fichiers concernés.** `track.service.ts`, `tracks-page.ts`, `tracks-page.html` et `tracks-page.css`.
 
+**Lecture audio authentifiée.** J’ai lancé la lecture d’une piste. Le lecteur est en cours de lecture et Network montre la requête audio avec un Bearer masqué, une réponse 200 et le type `audio/mpeg`. Je constate que le fichier a été récupéré par une requête authentifiée avant son utilisation par le lecteur.
+
 ![Lecture audio, Authorization Bearer, HTTP 200 et audio/mpeg](captures/tp2-audio-jwt.png)
+
+**Nettoyage du lecteur en quittant la bibliothèque.** J’ai navigué vers Profil après avoir chargé un morceau. La console affiche le message de révocation de l’ObjectURL dans `ngOnDestroy`. Je vérifie que le nettoyage est exécuté, ce message ne mesure pas directement la mémoire libérée.
 
 ![Révocation ObjectURL après navigation vers Profil](captures/tp2-objecturl-destruction.png)
 
@@ -400,13 +448,23 @@ La bibliothèque comprend aussi la suppression avec confirmation, le formatage d
 
 **Comment j’ai vérifié.** J’ai fait vérifier l’annulation avec l’assistant : aucune requête DELETE n’est envoyée. Pour le test de suppression, j’ai autorisé uniquement la suppression de « TP3 preuve suppression temporaire 15-10 ». Les captures montrent le DELETE 204, puis le GET de rafraîchissement 200, la disparition de la piste et le SnackBar de succès. J’ai conservé « Capture TP — piste 4 ». Les tests automatisés vérifient aussi le blocage d’un second appel, l’annulation et le rafraîchissement après 404.
 
+**Confirmation avant suppression.** J’ai cliqué sur l’action Supprimer d’une piste. La boîte de dialogue me demande de confirmer avant l’envoi de la requête. Cette capture montre cette étape préalable, elle ne prouve pas à elle seule que la suppression a été confirmée. L’annulation est aussi vérifiée par un test automatisé.
+
 ![Confirmation avant suppression de la piste de démonstration](captures/tp3-suppression-confirmation.png)
+
+**Suppression suivie du rafraîchissement.** J’ai confirmé la suppression de ma piste temporaire de preuve. Network montre le DELETE en 204, puis le GET en 200 pour actualiser la bibliothèque. Je retrouve aussi le SnackBar de succès dans l’interface.
 
 ![Suppression : réponse 204, rafraîchissement 200 et SnackBar](captures/tp3-suppression-network.png)
 
+**Réponse du DELETE.** J’ai sélectionné la requête de suppression dans Network. Les détails montrent la méthode DELETE, l’URL de la piste et le statut 204 No Content. Ce statut confirme que l’API a terminé la suppression sans renvoyer de corps de réponse.
+
 ![Détail de la requête DELETE avec réponse 204](captures/tp3-suppression-delete204.png)
 
+**Rechargement après suppression.** J’ai ouvert le GET envoyé après le DELETE. Le statut 200 et les paramètres de pagination montrent que le composant demande à nouveau la page au serveur. Cette requête permet de mettre la liste à jour après la suppression.
+
 ![Détail du GET de rafraîchissement avec réponse 200](captures/tp3-suppression-get200.png)
+
+**Retour visible après suppression.** J’ai vérifié le message de succès affiché dans le SnackBar après la réponse du serveur. La notification confirme à l’utilisateur le résultat de l’action. Elle complète la preuve HTTP du DELETE, sans la remplacer.
 
 ![SnackBar de succès après suppression de la piste temporaire](captures/tp3-suppression-snackbar.png)
 
@@ -432,9 +490,15 @@ Pendant l’envoi, le titre, le fichier et le bouton sont désactivés. La méth
 
 **Fichiers concernés.** `src/main.ts`, `track.service.ts`, `tracks-page.ts`, `tracks-page.html` et `tracks-page.css`.
 
+**Progression pendant le transfert.** J’ai envoyé `song2.mp3` avec un transfert ralenti pour rendre les étapes visibles. La capture montre 23 % et les contrôles désactivés pendant l’envoi. Ce pourcentage indique les octets transmis, il ne signifie pas encore que l’API a accepté la piste.
+
 ![Upload à 23 pour cent avec contrôles désactivés](captures/tp3-upload-progression.png)
 
+**Succès après acceptation par l’API.** J’ai attendu la réponse finale 201 de l’upload. La piste apparaît dans la bibliothèque, le message de succès est affiché et le formulaire est vidé. Je vérifie ainsi que le succès dépend de la réponse du serveur et pas seulement d’une progression à 100 %.
+
 ![Réponse HTTP 201, piste ajoutée et formulaire vidé](captures/tp3-upload-reponse201.png)
+
+**Contrat conservé avec la progression.** J’ai ouvert le contenu du POST d’upload. Je retrouve les champs `audio` et `title`. L’ajout des événements de progression n’a donc pas changé le format multipart attendu par le backend.
 
 ![Multipart contenant audio et title](captures/tp3-upload-multipart.png)
 
@@ -507,6 +571,8 @@ Pour les vérifications effectuées avec l’assistant, les commandes Angular on
 Pour terminer, j’ai demandé à l’assistant de vérifier les principaux parcours dans Chromium 151 : connexion, chargement du profil via l’API, pagination aller-retour, lecture audio, nettoyage du lecteur et suppression de la piste temporaire. J’ai également fait corriger le favicon manquant, qui provoquait une requête 404, en ajoutant une icône SVG dans `frontend-starter/src/index.html`.
 
 Je me suis appuyé sur le journal de vérification pour contrôler la console : sur ces parcours, il ne contient aucune erreur ou exception JavaScript, aucun JWT et aucun mot de passe de démonstration. Le navigateur affiche une suggestion d’autocomplétion du formulaire, sans erreur d’exécution. Les messages et résultats sont conservés dans [le journal de vérification finale](captures/tp3-verifications-finales.json).
+
+**Console après les parcours vérifiés.** J’ai consulté la console avec tous les niveaux de journalisation activés après les parcours du contrôle final. Sur cette séance, je ne retrouve ni erreur JavaScript inattendue ni donnée d’authentification dans les messages collectés. Je limite cette conclusion aux actions observées et je conserve le journal associé comme complément.
 
 ![Console finale, tous niveaux de journalisation activés](captures/tp3-console-finale.png)
 
