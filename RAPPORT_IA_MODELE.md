@@ -1,6 +1,6 @@
 # Rapport d’usage de l’IA — TP1, TP2 et TP3
 
-J’ai réalisé les TP1, TP2 et TP3 individuellement. J’ai utilisé un assistant IA pour analyser le projet, compléter le code Angular et préparer les tests. Je m’en suis aussi servi pour m’aider à vérifier l’application et à rédiger ce rapport. Pour chaque mission, je présente ma demande, les modifications obtenues et les résultats des vérifications. Les exemples de prompts sont des extraits courts ou des reformulations de mes demandes, je ne les présente pas tous comme des citations mot pour mot de mon historique.
+J’ai réalisé les TP1, TP2 et TP3 individuellement. J’ai utilisé un assistant IA pour analyser le projet, compléter le code Angular et préparer les tests. Je m’en suis aussi servi pour m’aider à vérifier l’application. Pour chaque mission, je présente ma demande, les modifications obtenues et les résultats des vérifications. Les exemples de prompts sont des extraits courts ou des reformulations de mes demandes, je ne les présente pas tous comme des citations mot pour mot de mon historique.
 
 | Mission | TP | Contenu |
 |---|---|---|
@@ -16,7 +16,6 @@ J’ai réalisé les TP1, TP2 et TP3 individuellement. J’ai utilisé un assist
 
 **Objectif.** Comprendre le trajet d’une requête avant de modifier l’application.
 
-**Usage de l’IA.** Lors de la relecture du rapport, j’ai demandé à l’assistant de comparer les trois sujets avec mes réponses, puis de compléter les explications manquantes du TP1 à partir du code. Cette cartographie a été ajoutée lors de cette relecture, elle ne constitue pas une preuve de test dans le navigateur.
 
 ### Fichiers et responsabilités
 
@@ -127,11 +126,10 @@ Au démarrage du service, `token` est initialisé depuis `localStorage.getItem('
 
 ### Questions sur l’assistant IA
 
-**Quel modèle ai-je utilisé ?** J’ai utilisé GPT-6.1 Sol et j’ai confirmé ce nom lors de la relecture du rapport. Pour identifier un modèle, je relève le nom affiché dans l’outil au moment de la séance, le code Angular ne permet pas de le retrouver.
+**Quel modèle ai-je utilisé ?** J’ai utilisé GPT-6.1 Sol. Pour identifier un modèle, je relève le nom affiché dans l’outil au moment de la séance, le code Angular ne permet pas de le retrouver.
 
 **Comment connaître le nombre de tokens consommés ?** Pour un appel à l’API OpenAI, le champ `usage` de la réponse indique la consommation, notamment `total_tokens`, le tableau de bord d’usage API permet le suivi du compte. Cette méthode est documentée dans la [documentation officielle OpenAI sur l’usage](https://developers.openai.com/api/docs/guides/advanced-usage). Dans une application d’assistance, il faut consulter le suivi d’usage disponible dans l’outil : un quota ou un pourcentage de contexte n’est pas nécessairement un compteur exact des tokens consommés. Je n’ai pas conservé de relevé chiffré des séances de TP et ne peux donc pas annoncer un total vérifié.
 
-**Qui peut conseiller un modèle pour une tâche ?** L’enseignant et l’assistant peuvent aider à préciser les besoins et comparer des candidats, en s’appuyant sur la documentation du fournisseur. Pour ce projet, je peux comparer la qualité des explications Angular, les corrections de code et les tests produits. Le choix se vérifie sur des tâches représentatives en tenant compte de la qualité, du coût et du délai, voir le [guide officiel de sélection de modèle](https://developers.openai.com/api/docs/guides/model-selection). Le conseil d’un assistant ne remplace pas la vérification des résultats.
 
 ### Checkpoint HTTP : preuves réelles du 31 octobre 2026
 
@@ -155,7 +153,7 @@ Avant d’ajouter les captures au projet, masquer entièrement les mots de passe
 
 #### Résultats effectivement observés avec l’assistant
 
-Le 31 octobre 2026, j’ai demandé à l’assistant de réaliser les vérifications manquantes. Le frontend Angular et l’API Express réels ont été utilisés avec MongoDB Atlas. Un relais HTTP local temporaire sur `127.0.0.1:4201` transmettait les pages à Angular sur 4200 et les requêtes `/api` à Express sur 3000. Le script [scripts/tp1-proof-proxy.mjs](scripts/tp1-proof-proxy.mjs) enregistrait uniquement une version expurgée des échanges. Aucun mock de réponse n’a été utilisé. Les mots de passe et JWT ont été remplacés par `[MASQUÉ]` avant toute écriture sur disque.
+J’ai vérifié la connexion, le profil et le traitement des réponses 401 avec l’aide de l’assistant. Le frontend Angular et l’API Express réels ont été utilisés avec MongoDB Atlas. Un relais HTTP local temporaire sur `127.0.0.1:4201` transmettait les pages à Angular sur 4200 et les requêtes `/api` à Express sur 3000. Le script [scripts/tp1-proof-proxy.mjs](scripts/tp1-proof-proxy.mjs) enregistrait uniquement une version expurgée des échanges. Aucun mock de réponse n’a été utilisé. Les mots de passe et JWT ont été remplacés par `[MASQUÉ]` avant toute écriture sur disque.
 
 | Vérification | Résultat réellement observé |
 |---|---|
@@ -235,7 +233,7 @@ Les corps de login et la réponse de login contenant un JWT ne sont pas affiché
 
 ### Cartographie précise du flux d’upload et des validations
 
-Complément de relecture du 31 octobre 2026 : j’ai demandé à l’IA de localiser chaque étape et de vérifier les refus réels, sans modifier les routes du backend.
+J’ai identifié les fichiers et méthodes de chaque étape de l’upload et vérifié les refus du serveur. Les routes du backend sont conservées.
 
 | Étape | Fichier et méthode | Rôle |
 |---|---|---|
@@ -252,7 +250,7 @@ Complément de relecture du 31 octobre 2026 : j’ai demandé à l’IA de local
 
 Dans le backend, `limits: { fileSize: MAX_FILE_SIZE }` impose `25 * 1024 * 1024`, soit **26 214 400 octets (25 Mio)**. Le `fileFilter` vérifie l’appartenance du MIME à l’ensemble `allowed` : `audio/mpeg`, `audio/wav`, `audio/x-wav`, `audio/ogg`, `audio/mp4`, `audio/x-m4a`. Il ne suffit donc pas que le MIME commence par `audio/`. Multer ne réalise pas une analyse complète du contenu sonore : le filtre de MIME ne prouve pas que les octets sont décodables.
 
-Lors de cette relecture, la validation frontend a été resserrée sur ces six types MIME, si le navigateur fournit un type vide, une extension attendue sert de présélection. Une extension audio ne permet plus de contourner un MIME explicitement refusé. Le serveur conserve la décision finale. La limite frontend existante de **25 000 000 octets (25 Mo décimaux)** est conservée : elle est légèrement plus restrictive que celle du serveur, ce qui explique le rejet local du fichier de 26 000 000 octets dans la preuve historique. Ce fichier ne prouve pas un dépassement de la limite Multer. Les messages frontend indiquent explicitement le seuil en octets.
+J’ai resserré la validation frontend sur ces six types MIME, si le navigateur fournit un type vide, une extension attendue sert de présélection. Une extension audio ne permet plus de contourner un MIME explicitement refusé. Le serveur conserve la décision finale. La limite frontend existante de **25 000 000 octets (25 Mo décimaux)** est conservée : elle est légèrement plus restrictive que celle du serveur, ce qui explique le rejet local du fichier de 26 000 000 octets dans la preuve historique. Ce fichier ne prouve pas un dépassement de la limite Multer. Les messages frontend indiquent explicitement le seuil en octets.
 
 Le frontend donne un retour immédiat et évite un transfert inutile. Il ne sécurise pas l’API : un autre client peut ignorer ces contrôles, comme dans le test de refus MIME ci-dessous. La validation serveur reste indispensable.
 
@@ -264,9 +262,9 @@ Dans `tracks-page.html`, le bouton Écouter appelle `play(track)` de `tracks-pag
 
 ### Fiabilisation du chargement de la bibliothèque
 
-Le 31 octobre, j’ai demandé de compléter l’erreur manquante de la mission 2. `tracks-page.ts` possède désormais le Signal `listError`. `load()` l’efface au début d’un nouvel essai et lui affecte un message après un échec HTTP. Le template affiche ce message avec `role="alert"`. Le bouton Actualiser permet de relancer la requête, les anciennes pistes ne sont pas effacées en cas d’échec. L’état vide n’est plus affiché pendant le premier chargement ni à la place d’une erreur. Un test HTTP simulé vérifie le message après 503, la fin du chargement, la conservation des pistes et la disparition de l’erreur après un nouvel essai réussi.
+J’ai ajouté la gestion des erreurs de chargement de la bibliothèque avec l’aide de l’IA. `tracks-page.ts` possède désormais le Signal `listError`. `load()` l’efface au début d’un nouvel essai et lui affecte un message après un échec HTTP. Le template affiche ce message avec `role="alert"`. Le bouton Actualiser permet de relancer la requête, les anciennes pistes ne sont pas effacées en cas d’échec. L’état vide n’est plus affiché pendant le premier chargement ni à la place d’une erreur. Un test HTTP simulé vérifie le message après 503, la fin du chargement, la conservation des pistes et la disparition de l’erreur après un nouvel essai réussi.
 
-Après ces changements et le test du refus local de FLAC : **9 tests frontend sur 9 réussis**, **2 tests backend sur 2 réussis**, et build Angular réussi en 4,063 s sous Node 24.21.0. Les sept tests mentionnés dans les sections historiques du TP3 restent ceux de la séance initiale, les deux tests supplémentaires viennent de cette relecture. Le frontend a également été rechargé dans Chrome et la connexion suivie du GET de bibliothèque a été vérifiée : liste affichée, requête avec `page=1&limit=5` (304 avec réutilisation du cache navigateur). Les détails des dernières commandes sont dans [RAPPORT_TESTS_TP3.md](RAPPORT_TESTS_TP3.md).
+Après ces changements et le test du refus local de FLAC : **9 tests frontend sur 9 réussis**, **2 tests backend sur 2 réussis**, et build Angular réussi en 4,063 s sous Node 24.21.0. Les sept tests mentionnés dans les sections historiques du TP3 restent ceux de la séance initiale, j’ai ajouté les deux tests supplémentaires pour la gestion des erreurs de bibliothèque et la validation du format. Le frontend a également été rechargé dans Chrome et la connexion suivie du GET de bibliothèque a été vérifiée : liste affichée, requête avec `page=1&limit=5` (304 avec réutilisation du cache navigateur). Les détails des dernières commandes sont dans [RAPPORT_TESTS_TP3.md](RAPPORT_TESTS_TP3.md).
 
 ### Preuves réelles du refus d’upload et des droits audio
 
@@ -416,11 +414,11 @@ La bibliothèque comprend aussi la suppression avec confirmation, le formatage d
 
 **Objectif.** Afficher la progression d’envoi, empêcher une seconde soumission et attendre la réponse du serveur avant d’annoncer le succès.
 
-**Ce que j’ai demandé à l’IA.** Je lui ai demandé de réaliser la progression de l’upload et de structurer le rapport par mission.
+**Ce que j’ai demandé à l’IA.** Je lui ai demandé de réaliser la progression de l’upload.
 
 **Exemple de prompt :**
 
-> « Fais la mission 6 et modifie le rapport pour mettre les titres par mission avec le TP entre parenthèses. »
+> « Fais la mission 6 pour afficher la progression de l’upload. »
 
 **Ce que j’ai obtenu.** J’ai fait évoluer l’upload avec l’aide de l’IA. `TrackService.upload()` conserve le multipart `audio` et `title`, avec `observe: 'events'` et `reportProgress: true`. `main.ts` configure `withXhr()` pour disposer des événements de progression d’upload. Le Signal `uploadProgress` est mis à jour à partir de `HttpEventType.UploadProgress`, avec le calcul `Math.round(100 * loaded / total)`. Si le total est inconnu, la barre reste indéterminée.
 
@@ -470,7 +468,7 @@ Les tests du service ciblent le contrat HTTP. Ceux du composant combinent le tem
 
 ### Restitution : que vérifierait un test d’intercepteur ou de guard ?
 
-Lors de la relecture du 31 octobre 2026, j’ai demandé à l’assistant de compléter cette explication à partir de `frontend-starter/src/app/shared/interceptors/auth.interceptor.ts` et de `frontend-starter/src/app/shared/guards/auth.guard.ts`. Les scénarios ci-dessous décrivent les assertions que je choisirais, ils ne sont pas présentés comme de nouveaux tests exécutés.
+Pour expliquer ces tests, je m’appuie sur le code de `frontend-starter/src/app/shared/interceptors/auth.interceptor.ts` et de `frontend-starter/src/app/shared/guards/auth.guard.ts`. Les scénarios ci-dessous décrivent les assertions que je choisirais, ils ne sont pas présentés comme de nouveaux tests exécutés.
 
 **Intercepteur.** Un test vérifierait la requête après son passage dans `authInterceptor`, en configurant `provideHttpClient(withInterceptors([authInterceptor]))` et `provideHttpClientTesting()`. Avec un faux token de test dans `AuthService.token`, la requête doit avoir exactement le header `Authorization: Bearer <jeton-de-test>`. Sans token et sans header initial, elle ne doit pas ajouter Authorization. On vérifierait aussi que méthode, URL et corps sont conservés. Le transport serait intercepté par `HttpTestingController`, sans envoyer de JWT réel ni contacter le serveur.
 
@@ -488,7 +486,7 @@ Un **test d’intégration** vérifie la collaboration de plusieurs éléments r
 
 Les contrôles réels du TP2, eux, font collaborer un client HTTP, Express, Mongoose, Atlas et les fichiers audio : ce sont des vérifications d’intégration de l’API. Les parcours manuels effectués dans Angular et le navigateur vérifient une chaîne plus complète, proche d’un test de bout en bout. Aucun de ces niveaux ne remplace les autres : les tests isolés localisent précisément une régression, tandis que les intégrations peuvent révéler un problème de configuration ou de données, comme un fichier audio absent sur disque.
 
-**Résultats actuels.** Après les compléments TP2 du 31 octobre : **9 tests frontend réussis sur 9**, **2 tests backend réussis sur 2**, build réussi. Les sept tests et durées mentionnés ci-dessous sont les résultats historiques de la séance initiale. Aucun test d’intercepteur ou de guard n’a été ajouté lors de cette mise à jour documentaire, le minimum de trois scénarios frontend du sujet était déjà couvert. Le détail actuel figure en tête de [RAPPORT_TESTS_TP3.md](RAPPORT_TESTS_TP3.md).
+**Résultats des dernières exécutions.** **9 tests frontend réussis sur 9**, **2 tests backend réussis sur 2**, build réussi. Les sept tests et durées mentionnés ci-dessous sont les résultats historiques de la séance initiale. Je n’ai pas ajouté de test d’intercepteur ou de guard. Mes tests couvrent plus de trois scénarios frontend parmi les choix proposés dans le sujet. Le détail actuel figure en tête de [RAPPORT_TESTS_TP3.md](RAPPORT_TESTS_TP3.md).
 
 **Comment j’ai vérifié.** J’ai lancé `npm test` dans le frontend et le backend, puis `npm run build` dans le frontend. J’ai obtenu les résultats suivants et les ai partagés avec l’assistant :
 

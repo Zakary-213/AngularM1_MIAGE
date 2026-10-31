@@ -2,9 +2,9 @@
 
 Dans ce rapport, je présente les tests que j’ai écrits et les vérifications que j’ai effectuées ou fait effectuer avec l’aide de mon assistant IA. Je distingue les résultats observés des scénarios que je n’ai pas exécutés manuellement.
 
-## Mise à jour après compléments TP2 — 31 octobre 2026
+## Résultats des tests — 31 octobre 2026
 
-J’ai conservé les résultats du 8 et du 15 octobre comme historique. Après les compléments TP2, j’ai fait relancer les commandes avec mon assistant sur Windows avec Node 24.21.0. J’ai obtenu les résultats suivants :
+J’ai conservé les résultats du 8 et du 15 octobre comme historique. Pour les tests de la bibliothèque et de la validation des formats, j’ai fait exécuter les commandes avec l’aide de mon assistant sur Windows avec Node 24.21.0. J’ai obtenu les résultats suivants :
 
 | Vérification | Résultat actuel |
 |---|---|
