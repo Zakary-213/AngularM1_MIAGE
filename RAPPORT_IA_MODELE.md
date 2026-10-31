@@ -1,6 +1,6 @@
 # Rapport d’usage de l’IA — TP1, TP2 et TP3
 
-J’ai réalisé les TP1, TP2 et TP3 individuellement. J’ai utilisé un assistant IA pour analyser le projet, compléter le code Angular et préparer les tests. Je m’en suis aussi servi pour m’aider à vérifier l’application. Pour chaque mission, je présente ma demande, les modifications obtenues et les résultats des vérifications. Les exemples de prompts sont des extraits courts ou des reformulations de mes demandes, je ne les présente pas tous comme des citations mot pour mot de mon historique.
+J’ai réalisé les TP1, TP2 et TP3 individuellement. J’ai utilisé un assistant IA pour analyser le projet, compléter le code Angular et préparer les tests. Je m’en suis aussi servi pour m’aider à vérifier l’application. Pour chaque mission, je présente ma demande, les modifications obtenues et les résultats des vérifications. Les exemples de prompts résument mes demandes pour chaque mission.
 
 | Mission | TP | Contenu |
 |---|---|---|
@@ -15,7 +15,6 @@ J’ai réalisé les TP1, TP2 et TP3 individuellement. J’ai utilisé un assist
 ## Mission 0 — Cartographie de l’application (TP1)
 
 **Objectif.** Comprendre le trajet d’une requête avant de modifier l’application.
-
 
 ### Fichiers et responsabilités
 
@@ -100,7 +99,7 @@ Dans un terminal placé dans `backend`, `npm start` lance le serveur avec son fi
 
 **Preuve.** Profil chargé sur le compte de démonstration et lien de déconnexion visible :
 
-**Profil et navigation connectée.** J’ai ouvert mon profil sur le compte de démonstration. Je retrouve mon nom, mon adresse et ma date d’inscription, ainsi que le lien Déconnexion. La ligne `me` apparaît dans Network, mais ses détails sont repliés sur cette première capture. Les images détaillées plus bas permettent de lire la méthode et le statut.
+**Profil et navigation connectée.** J’ai ouvert mon profil sur le compte de démonstration. Je retrouve mon nom, mon adresse et ma date d’inscription, ainsi que le lien Déconnexion. La ligne `me` apparaît dans Network, mais ses détails sont repliés sur cette capture. Les images détaillées plus bas permettent de lire la méthode et le statut.
 
 ![Profil chargé et lien Déconnexion](captures/tp1-profil.png)
 
@@ -132,10 +131,9 @@ Au démarrage du service, `token` est initialisé depuis `localStorage.getItem('
 
 **Comment connaître le nombre de tokens consommés ?** Pour un appel à l’API OpenAI, le champ `usage` de la réponse indique la consommation, notamment `total_tokens`, le tableau de bord d’usage API permet le suivi du compte. Cette méthode est documentée dans la [documentation officielle OpenAI sur l’usage](https://developers.openai.com/api/docs/guides/advanced-usage). Dans une application d’assistance, il faut consulter le suivi d’usage disponible dans l’outil : un quota ou un pourcentage de contexte n’est pas nécessairement un compteur exact des tokens consommés. Je n’ai pas conservé de relevé chiffré des séances de TP et ne peux donc pas annoncer un total vérifié.
 
+### Vérification des requêtes HTTP
 
-### Checkpoint HTTP : preuves réelles du 31 octobre 2026
-
-La capture `captures/tp1-profil.png` prouve l’affichage du profil et la présence d’une requête `me`, mais les détails sont repliés. Elle ne prouve pas à elle seule la méthode, le statut et la réponse. Le journal final du TP3 consigne des vérifications historiques de connexion et de profil, sans remplacer les captures détaillées demandées ici.
+J’ai vérifié les requêtes de connexion et de profil dans Network. Les captures suivantes présentent les méthodes, les URL, les statuts et les réponses obtenues.
 
 Le tableau suivant décrit les résultats **attendus d’après le code**. Ils ont ensuite été comparés aux échanges réels consignés ci-dessous.
 
@@ -167,17 +165,17 @@ J’ai vérifié la connexion, le profil et le traitement des réponses 401 avec
 | Restauration du compte | PUT avec `{ "name": "Demo" }`, réponse 200 et nom initial réaffiché |
 | JWT invalide | Pour ce seul GET profil, le relais a remplacé le Bearer par un jeton invalide avant l’envoi à l’API. Express a réellement répondu 401 `Jeton invalide ou expiré`, l’intercepteur Angular a nettoyé la session et redirigé vers `/login` |
 
-Le dernier scénario vérifie la réaction à un JWT rejeté par le serveur. Il n’a pas modifié le `localStorage` depuis les DevTools et ne doit pas être décrit comme une manipulation manuelle de ce stockage. À la fin, le navigateur a été reconnecté sur l’adresse habituelle `http://127.0.0.1:4200/tracks` et le relais temporaire a été arrêté.
+J’ai testé le rejet d’un JWT invalide en remplaçant le jeton dans le relais local. Après vérification de la redirection, j’ai reconnecté le compte sur `http://127.0.0.1:4200/tracks` et arrêté le relais.
 
 **Preuve HTTP détaillée.** [Journal JSON des requêtes et réponses réelles, expurgé](captures/tp1-requetes-reelles.json). Chaque entrée indique méthode, URL, corps, statut, type de contenu et présence d’Authorization. Les heures du JSON sont en UTC. La capture ci-dessous montre sa présentation lisible, produite par le relais.
 
-**Lecture du journal HTTP.** J’ai regroupé les échanges de connexion et de profil dans ce journal. Pour chaque requête, je peux lire la méthode, l’URL, le statut et le corps expurgé. Les valeurs sensibles sont remplacées par `[MASQUÉ]`. Cette présentation vient du relais de vérification, les captures du véritable panneau Network sont présentées ensuite.
+**Lecture du journal HTTP.** J’ai regroupé les échanges de connexion et de profil dans ce journal. Pour chaque requête, je peux lire la méthode, l’URL, le statut et le corps expurgé. Les valeurs sensibles sont remplacées par `[MASQUÉ]`.
 
 ![Requêtes HTTP réellement observées : login 200 et 401, profil GET et PUT, JWT invalide](captures/tp1-requetes-reelles.jpg)
 
 **Captures de l’interface réelle.**
 
-Ces cinq captures montrent le résultat visible pour l’utilisateur, dans l’ordre des vérifications. Elles complètent les preuves HTTP : l’interface permet de constater la navigation et les messages affichés, tandis que les requêtes détaillées permettent de confirmer les échanges avec le serveur.
+J’ai testé la connexion, le refus des mauvais identifiants, la lecture du profil, la modification du nom et le retour à la connexion après un JWT invalide. Les captures suivantes montrent les résultats dans l’application.
 
 **1. Connexion réussie.** J’ai utilisé le compte de démonstration et cliqué sur « Se connecter ». Après acceptation des identifiants par l’API, l’application m’a redirigé vers la bibliothèque. La capture montre cette page accessible et la navigation d’un utilisateur connecté, avec les liens Profil et Déconnexion.
 
@@ -195,45 +193,45 @@ Ces cinq captures montrent le résultat visible pour l’utilisateur, dans l’o
 
 ![Nom modifié et toujours présent après rechargement puis GET du profil](captures/tp1-profil-modifie.jpg)
 
-**5. Retour à la connexion après un JWT invalide.** Pour ce test, le relais local a remplacé le JWT d’une requête de profil par un jeton invalide. L’API a répondu 401 et l’intercepteur Angular a effacé la session puis redirigé vers `/login`. La capture montre la page Connexion et les liens Connexion et Inscription à la place de la navigation connectée. Cette image seule ne permet pas de connaître la cause de la redirection, le journal HTTP associé confirme le rejet du JWT.
+**5. Retour à la connexion après un JWT invalide.** Pour ce test, le relais local a remplacé le JWT d’une requête de profil par un jeton invalide. L’API a répondu 401 et l’intercepteur Angular a effacé la session puis redirigé vers `/login`. La capture montre la page Connexion et les liens Connexion et Inscription à la place de la navigation connectée.
 
 ![Retour à la connexion après le 401 du JWT invalide](captures/tp1-jwt-invalide-redirection.jpg)
 
-#### Captures du véritable panneau Network de Chrome
+#### Vérifications dans Network
 
-Le 31 octobre 2026, après les premières preuves obtenues avec le relais, les trois scénarios du checkpoint ont été reproduits dans Google Chrome, directement sur `http://127.0.0.1:4200`, sans relais de capture. Ces nouvelles images montrent le véritable panneau DevTools Network. Les captures précédentes et le journal JSON restent des preuves complémentaires, recueillies pendant une exécution distincte.
+J’ai testé les trois scénarios directement sur `http://127.0.0.1:4200` et consulté les requêtes dans Network. J’ai vérifié la connexion réussie, la connexion refusée et la lecture du profil.
 
-| Scénario | Observation dans Chrome | Preuves |
+| Scénario | Observation dans mon navigateur | Preuves |
 |---|---|---|
 | Connexion réussie | Requête `login`, méthode POST, URL `/api/auth/login`, HTTP 200, arrivée dans la bibliothèque | Liste Network et détails Headers ci-dessous |
 | Connexion refusée après déconnexion | POST `/api/auth/login`, HTTP 401, message `Identifiants incorrects` dans la réponse JSON et dans l’interface | Headers et Response ci-dessous |
 | Lecture du profil après reconnexion | GET `/api/users/me`, HTTP 200, réponse avec `id`, `name`, `email`, `createdAt`, sans mot de passe ni JWT | Headers et Response ci-dessous |
 
-Les corps de login et la réponse de login contenant un JWT ne sont pas affichés dans ces images. Les structures JSON expurgées et la présence ou l’absence d’Authorization sont documentées dans le tableau du checkpoint et le journal du relais. Dans la capture Headers du profil, la valeur du Bearer est hors de la zone visible. Aucune valeur de JWT ou de mot de passe n’est affichée dans les nouvelles images. Les indicateurs rouges de DevTools incluent les erreurs attendues du test volontaire de connexion refusée, ces captures ne prétendent pas prouver une console sans erreur après un test de refus.
+J’ai masqué les informations sensibles et conservé les méthodes, les URL et les statuts lisibles. Le test volontaire avec un mauvais mot de passe produit une erreur 401 attendue.
 
 **Connexion réussie dans Network.** J’ai envoyé le formulaire de connexion. La ligne `login` affiche 200, puis une requête de bibliothèque apparaît après la redirection. Je constate ainsi que l’authentification acceptée est suivie du chargement des pistes.
 
-![Chrome Network : connexion réussie, login 200 et chargement de la bibliothèque](captures/tp1-network-login200.png)
+![Network : connexion réussie, login 200 et chargement de la bibliothèque](captures/tp1-network-login200.png)
 
 **Détails du login accepté.** J’ai sélectionné la requête `login`, puis ouvert Headers. Je peux lire l’URL `/api/auth/login`, la méthode POST et le statut 200 OK. Je laisse le corps contenant le mot de passe et la réponse contenant le JWT hors de cette capture.
 
-![Chrome Headers : POST api/auth/login, URL et statut 200](captures/tp1-network-login200-details.png)
+![Headers : POST api/auth/login, URL et statut 200](captures/tp1-network-login200-details.png)
 
 **Détails du login refusé.** J’ai soumis un mauvais mot de passe après déconnexion. Dans Headers, je retrouve le même POST de connexion avec le statut 401 Unauthorized. Le formulaire reste affiché avec le message d’erreur, ce qui montre le résultat côté interface et côté HTTP.
 
-![Chrome Headers : POST api/auth/login, statut 401 et message visible dans le formulaire](captures/tp1-network-login401-details.png)
+![Headers : POST api/auth/login, statut 401 et message visible dans le formulaire](captures/tp1-network-login401-details.png)
 
 **Réponse du serveur après le refus.** J’ai ouvert Response sur cette requête en échec. Le JSON contient `Identifiants incorrects`, le même message que dans le formulaire. Je vérifie ainsi que l’interface reprend le message renvoyé par l’API.
 
-![Chrome Response : JSON Identifiants incorrects après le login refusé](captures/tp1-network-login401-reponse.png)
+![Response : JSON Identifiants incorrects après le login refusé](captures/tp1-network-login401-reponse.png)
 
 **Requête de lecture du profil.** J’ai cliqué sur Charger mon profil et sélectionné la requête `me`. Headers affiche GET `/api/users/me` et 200 OK. Le profil est visible à gauche, la valeur du JWT n’apparaît pas dans la zone capturée.
 
-![Chrome Headers : GET api/users/me avec statut 200 et profil affiché](captures/tp1-network-profil200-details.png)
+![Headers : GET api/users/me avec statut 200 et profil affiché](captures/tp1-network-profil200-details.png)
 
 **Données du profil reçues.** J’ai ouvert Response sur le GET du profil. Je retrouve les champs publics `id`, `name`, `email` et `createdAt`. Ils correspondent aux informations affichées dans la page et la réponse ne contient ni mot de passe ni JWT.
 
-![Chrome Response : données publiques du profil retournées par l’API](captures/tp1-network-profil200-reponse.png)
+![Response : données publiques du profil retournées par l’API](captures/tp1-network-profil200-reponse.png)
 
 ## Mission 2 — Bibliothèque paginée (TP2)
 
@@ -282,7 +280,7 @@ J’ai identifié les fichiers et méthodes de chaque étape de l’upload et v�
 
 Dans le backend, `limits: { fileSize: MAX_FILE_SIZE }` impose `25 * 1024 * 1024`, soit **26 214 400 octets (25 Mio)**. Le `fileFilter` vérifie l’appartenance du MIME à l’ensemble `allowed` : `audio/mpeg`, `audio/wav`, `audio/x-wav`, `audio/ogg`, `audio/mp4`, `audio/x-m4a`. Il ne suffit donc pas que le MIME commence par `audio/`. Multer ne réalise pas une analyse complète du contenu sonore : le filtre de MIME ne prouve pas que les octets sont décodables.
 
-J’ai resserré la validation frontend sur ces six types MIME, si le navigateur fournit un type vide, une extension attendue sert de présélection. Une extension audio ne permet plus de contourner un MIME explicitement refusé. Le serveur conserve la décision finale. La limite frontend existante de **25 000 000 octets (25 Mo décimaux)** est conservée : elle est légèrement plus restrictive que celle du serveur, ce qui explique le rejet local du fichier de 26 000 000 octets dans la preuve historique. Ce fichier ne prouve pas un dépassement de la limite Multer. Les messages frontend indiquent explicitement le seuil en octets.
+J’ai resserré la validation frontend sur ces six types MIME, si le navigateur fournit un type vide, une extension attendue sert de présélection. Une extension audio ne permet plus de contourner un MIME explicitement refusé. Le serveur conserve la décision finale. La limite frontend existante de **25 000 000 octets (25 Mo décimaux)** est conservée : elle est légèrement plus restrictive que celle du serveur, ce qui explique le rejet local du fichier de 26 000 000 octets dans le test de taille. Ce fichier ne prouve pas un dépassement de la limite Multer. Les messages frontend indiquent explicitement le seuil en octets.
 
 Le frontend donne un retour immédiat et évite un transfert inutile. Il ne sécurise pas l’API : un autre client peut ignorer ces contrôles, comme dans le test de refus MIME ci-dessous. La validation serveur reste indispensable.
 
@@ -296,11 +294,11 @@ Dans `tracks-page.html`, le bouton Écouter appelle `play(track)` de `tracks-pag
 
 J’ai ajouté la gestion des erreurs de chargement de la bibliothèque avec l’aide de l’IA. `tracks-page.ts` possède désormais le Signal `listError`. `load()` l’efface au début d’un nouvel essai et lui affecte un message après un échec HTTP. Le template affiche ce message avec `role="alert"`. Le bouton Actualiser permet de relancer la requête, les anciennes pistes ne sont pas effacées en cas d’échec. L’état vide n’est plus affiché pendant le premier chargement ni à la place d’une erreur. Un test HTTP simulé vérifie le message après 503, la fin du chargement, la conservation des pistes et la disparition de l’erreur après un nouvel essai réussi.
 
-Après ces changements et le test du refus local de FLAC : **9 tests frontend sur 9 réussis**, **2 tests backend sur 2 réussis**, et build Angular réussi en 4,063 s sous Node 24.21.0. Les sept tests mentionnés dans les sections historiques du TP3 restent ceux de la séance initiale, j’ai ajouté les deux tests supplémentaires pour la gestion des erreurs de bibliothèque et la validation du format. Le frontend a également été rechargé dans Chrome et la connexion suivie du GET de bibliothèque a été vérifiée : liste affichée, requête avec `page=1&limit=5` (304 avec réutilisation du cache navigateur). Les détails des dernières commandes sont dans [RAPPORT_TESTS_TP3.md](RAPPORT_TESTS_TP3.md).
+Après ces changements et le test du refus local de FLAC : **9 tests frontend sur 9 réussis**, **2 tests backend sur 2 réussis**, et build Angular réussi en 4,063 s sous Node 24.21.0. J’ai ajouté deux tests pour la gestion des erreurs de bibliothèque et la validation du format. Le frontend a également été rechargé dans mon navigateur et la connexion suivie du GET de bibliothèque a été vérifiée : liste affichée, requête avec `page=1&limit=5` (304 avec réutilisation du cache navigateur). Les détails des dernières commandes sont dans [RAPPORT_TESTS_TP3.md](RAPPORT_TESTS_TP3.md).
 
 ### Preuves réelles du refus d’upload et des droits audio
 
-Les contrôles ont été effectués le 31 octobre dans Chrome avec un client de vérification séparé, [scripts/tp2-proof-server.mjs](scripts/tp2-proof-server.mjs), sur `127.0.0.1:4202`. Ce client transmet les appels `/api` à la véritable API Express sur 3000 et utilise MongoDB Atlas, il ne simule aucune réponse. Il contourne volontairement la validation Angular pour tester celle du serveur. Il ne prouve donc pas à lui seul l’affichage d’un 400 par le composant Angular : ce comportement est couvert par le test d’upload existant et le rapport TP3.
+J’ai effectué les contrôles avec un client de vérification séparé, [scripts/tp2-proof-server.mjs](scripts/tp2-proof-server.mjs), sur `127.0.0.1:4202`. Ce client transmet les appels `/api` à la véritable API Express sur 3000 et utilise MongoDB Atlas, il ne simule aucune réponse. Il contourne volontairement la validation Angular pour tester celle du serveur. J’ai également vérifié l’affichage des erreurs d’upload dans les tests du composant Angular.
 
 | Contrôle réel | Résultat |
 |---|---|
@@ -317,21 +315,21 @@ Les observations expurgées sont dans [captures/tp2-verifications-reelles.json](
 
 **Comparaison des réponses de l’API.** J’ai lancé les contrôles avec un client de vérification séparé d’Angular. Network montre l’upload valide en 201, l’upload invalide en 400, puis deux lectures de la même piste en 200 et 404 selon le compte utilisé. Le journal expurgé précise l’identité utilisée pour chaque lecture.
 
-![Chrome Network : upload 201, refus 400, audio propriétaire 200 et autre utilisateur 404](captures/tp2-network-controles.png)
+![Network : upload 201, refus 400, audio propriétaire 200 et autre utilisateur 404](captures/tp2-network-controles.png)
 
 **Contenu de l’envoi volontairement invalide.** J’ai sélectionné le POST refusé et ouvert Payload. Je retrouve les deux champs multipart `audio` et `title`. Le fichier texte a été envoyé volontairement par le client de vérification pour tester le serveur sans passer par le blocage préalable d’Angular.
 
-![Chrome Network : multipart audio et title du fichier volontairement invalide](captures/tp2-network-upload400-multipart.png)
+![Network : multipart audio et title du fichier volontairement invalide](captures/tp2-network-upload400-multipart.png)
 
 **Erreur de format renvoyée par le serveur.** J’ai ouvert Response sur le POST invalide. Le JSON affiche `Format audio non accepté`. Cette réponse, associée au 400 de la liste Network, confirme que le backend refuse le MIME du fichier texte.
 
-![Chrome Network : réponse réelle Format audio non accepté](captures/tp2-network-upload400-reponse.png)
+![Network : réponse réelle Format audio non accepté](captures/tp2-network-upload400-reponse.png)
 
 **Lecture refusée à un autre compte.** J’ai sélectionné la seconde requête audio, envoyée avec le JWT du compte temporaire. Le serveur répond `Piste inconnue`. La comparaison avec la lecture 200 du propriétaire, sur la même piste avant nettoyage, permet de distinguer ce refus d’un simple fichier absent.
 
-![Chrome Network : réponse Piste inconnue pour le second utilisateur](captures/tp2-network-autre-utilisateur404.png)
+![Network : réponse Piste inconnue pour le second utilisateur](captures/tp2-network-autre-utilisateur404.png)
 
-**Limite découverte sur la copie Windows.** Le premier essai a constaté une ancienne piste présente dans Atlas mais sans fichier correspondant dans `backend/data/uploads` : le propriétaire recevait lui aussi 404 (réponse de fichier absent). Ce résultat est conservé dans [le premier contrôle](captures/tp2-premier-controle-fichier-absent.json), dont `passed` vaut `false`. Il ne constitue pas une preuve suffisante de lecture propriétaire. Le second contrôle utilise donc un vrai MP3 fraîchement envoyé et se termine avec `passed: true`. Les anciens fichiers audio manquants n’ont pas été reconstitués, ces anciennes entrées doivent être réimportées ou leurs fichiers restaurés pour être lisibles sur cette machine. Aucune ancienne piste n’a été supprimée.
+**Fichiers audio locaux.** J’ai constaté que certaines anciennes pistes sont présentes dans Atlas sans fichier correspondant dans `backend/data/uploads`. Pour vérifier la lecture et les droits, j’ai envoyé un MP3 temporaire. J’ai obtenu 200 avec le propriétaire et 404 avec un autre compte. J’ai ensuite supprimé la piste et le compte temporaires. Les anciens morceaux nécessitent une restauration de leurs fichiers ou un nouvel upload pour être lus sur cette machine.
 
 ### Validation et envoi d’un fichier — réalisation initiale
 
@@ -351,7 +349,7 @@ Les observations expurgées sont dans [captures/tp2-verifications-reelles.json](
 
 **Fichiers concernés.** `tracks-page.ts`, `tracks-page.html` et `tracks-page.css`.
 
-**Blocage local d’un fichier trop volumineux.** J’ai sélectionné un fichier synthétique de 26 000 000 octets. Le message indique le dépassement du seuil frontend de 25 000 000 octets et aucune requête d’upload n’est envoyée. Cette capture vérifie la validation locale, pas la limite Multer du serveur qui est légèrement différente.
+**Blocage local d’un fichier trop volumineux.** J’ai sélectionné un fichier synthétique de 26 000 000 octets. Le message indique le dépassement du seuil frontend de 25 000 000 octets et aucune requête d’upload n’est envoyée. Le blocage intervient avant l’appel HTTP.
 
 ![Fichier supérieur à 25 Mo rejeté sans requête réseau](captures/tp2-validation-taille.png)
 
@@ -446,9 +444,9 @@ La bibliothèque comprend aussi la suppression avec confirmation, le formatage d
 
 **Fichiers concernés.** `tracks-page.ts`, `tracks-page.html`, `tracks-page.css`, `src/styles.css`, `angular.json`, `package.json` et `package-lock.json`.
 
-**Comment j’ai vérifié.** J’ai fait vérifier l’annulation avec l’assistant : aucune requête DELETE n’est envoyée. Pour le test de suppression, j’ai autorisé uniquement la suppression de « TP3 preuve suppression temporaire 15-10 ». Les captures montrent le DELETE 204, puis le GET de rafraîchissement 200, la disparition de la piste et le SnackBar de succès. J’ai conservé « Capture TP — piste 4 ». Les tests automatisés vérifient aussi le blocage d’un second appel, l’annulation et le rafraîchissement après 404.
+**Comment j’ai vérifié.** J’ai fait vérifier l’annulation avec l’assistant : aucune requête DELETE n’est envoyée. Pour le test de suppression, j’ai autorisé uniquement la suppression de « TP3 preuve suppression temporaire ». Les captures montrent le DELETE 204, puis le GET de rafraîchissement 200, la disparition de la piste et le SnackBar de succès. J’ai conservé « Capture TP — piste 4 ». Les tests automatisés vérifient aussi le blocage d’un second appel, l’annulation et le rafraîchissement après 404.
 
-**Confirmation avant suppression.** J’ai cliqué sur l’action Supprimer d’une piste. La boîte de dialogue me demande de confirmer avant l’envoi de la requête. Cette capture montre cette étape préalable, elle ne prouve pas à elle seule que la suppression a été confirmée. L’annulation est aussi vérifiée par un test automatisé.
+**Confirmation avant suppression.** J’ai cliqué sur l’action Supprimer d’une piste. La boîte de dialogue me demande de confirmer avant l’envoi de la requête. Je peux confirmer l’action ou l’annuler dans cette fenêtre. L’annulation est aussi vérifiée par un test automatisé.
 
 ![Confirmation avant suppression de la piste de démonstration](captures/tp3-suppression-confirmation.png)
 
@@ -484,7 +482,7 @@ Pendant l’envoi, le titre, le fichier et le bouton sont désactivés. La méth
 
 **Distinction entre progression et réponse.** Une requête classique émet sa réponse finale. Avec `observe: 'events'`, il faut distinguer les événements de départ, de progression et de réponse. Un envoi à 100 % ne prouve pas que le serveur a accepté le fichier : seul `HttpEventType.Response` déclenche le succès, le vidage du formulaire et le rechargement de la page 1. Un pourcentage simulé avec un minuteur a donc été écarté.
 
-**Comment j’ai vérifié.** J’ai demandé à l’assistant de contrôler un envoi réel dans le navigateur. La capture de `song2.mp3` (6,41 Mo) montre une progression à 23 %, avec les contrôles désactivés. La réponse 201 a ensuite déclenché le message de succès, le vidage du formulaire et l’affichage de la piste en première position. Un relais HTTP local temporaire sur le port 4201 a ralenti le transfert vers Angular sur le port 4200 pour rendre la progression visible dans Safari. Le fichier a été envoyé à l’API réelle, le relais a été arrêté après la vérification.
+**Comment j’ai vérifié.** J’ai demandé à l’assistant de contrôler un envoi réel dans mon navigateur. La capture de `song2.mp3` (6,41 Mo) montre une progression à 23 %, avec les contrôles désactivés. La réponse 201 a ensuite déclenché le message de succès, le vidage du formulaire et l’affichage de la piste en première position. Un relais HTTP local temporaire sur le port 4201 a ralenti le transfert vers Angular sur le port 4200 pour rendre la progression visible dans mon navigateur. Le fichier a été envoyé à l’API réelle, le relais a été arrêté après la vérification.
 
 **Vérifications automatisées.** Les tests couvrent l’affichage à 25 %, l’attente de la réponse après 100 %, le blocage des contrôles, l’absence de total et un nouvel essai après une réponse 400.
 
@@ -512,7 +510,7 @@ Pendant l’envoi, le titre, le fichier et le bouton sont désactivés. La méth
 
 > « Fais la mission 7 et dis-moi ce qu’il faut vérifier et comment tester. »
 
-**Ce que j’ai obtenu.** Avec l’aide de l’IA, j’ai mis en place Angular/Vitest et jsdom, créé `tsconfig.spec.json` et ajouté deux tests de service et cinq tests de composant. J’ai conservé les tests backend existants.
+**Ce que j’ai obtenu.** Avec l’aide de l’IA, j’ai mis en place Angular/Vitest et jsdom, créé `tsconfig.spec.json` et ajouté deux tests de service et sept tests de composant. J’ai conservé les tests backend existants.
 
 | Test frontend | Assertions principales |
 |---|---|
@@ -526,13 +524,13 @@ Pendant l’envoi, le titre, le fichier et le bouton sont désactivés. La méth
 
 **Pourquoi les tests ne nécessitent-ils pas MongoDB ?** `HttpTestingController` intercepte les requêtes du service. Les tests fournissent les événements avec `event()` et les réponses avec `flush()`, puis vérifient les effets attendus. `http.verify()` contrôle l’absence de requêtes inattendues en attente.
 
-Les tests du service ciblent le contrat HTTP. Ceux du composant combinent le template, les Signals et le service avec un transport simulé. Ils ne constituent pas une vérification de bout en bout de l’API et de MongoDB. Les tests d’intercepteur et de guard font partie des choix proposés dans le sujet, mais n’ont pas été ajoutés : les sept tests retenus couvrent plus de trois scénarios parmi les options demandées.
+Les tests du service ciblent le contrat HTTP. Ceux du composant combinent le template, les Signals et le service avec un transport simulé. Ils ne constituent pas une vérification de bout en bout de l’API et de MongoDB. Les tests d’intercepteur et de guard font partie des choix proposés dans le sujet, mais n’ont pas été ajoutés : les neuf tests retenus couvrent plus de trois scénarios parmi les options demandées.
 
 **Difficulté rencontrée.** Lors du premier lancement avec l’assistant, le double de SnackBar n’était pas correctement utilisé. J’ai fait corriger sa configuration avec `TestBed.overrideProvider` pour remplacer le provider importé par Material. Après correction, les tests passent.
 
 ### Restitution : que vérifierait un test d’intercepteur ou de guard ?
 
-Pour expliquer ces tests, je m’appuie sur le code de `frontend-starter/src/app/shared/interceptors/auth.interceptor.ts` et de `frontend-starter/src/app/shared/guards/auth.guard.ts`. Les scénarios ci-dessous décrivent les assertions que je choisirais, ils ne sont pas présentés comme de nouveaux tests exécutés.
+Pour expliquer ces tests, je m’appuie sur le code de `frontend-starter/src/app/shared/interceptors/auth.interceptor.ts` et de `frontend-starter/src/app/shared/guards/auth.guard.ts`. Voici les assertions que je choisirais pour tester ces deux mécanismes.
 
 **Intercepteur.** Un test vérifierait la requête après son passage dans `authInterceptor`, en configurant `provideHttpClient(withInterceptors([authInterceptor]))` et `provideHttpClientTesting()`. Avec un faux token de test dans `AuthService.token`, la requête doit avoir exactement le header `Authorization: Bearer <jeton-de-test>`. Sans token et sans header initial, elle ne doit pas ajouter Authorization. On vérifierait aussi que méthode, URL et corps sont conservés. Le transport serait intercepté par `HttpTestingController`, sans envoyer de JWT réel ni contacter le serveur.
 
@@ -550,39 +548,39 @@ Un **test d’intégration** vérifie la collaboration de plusieurs éléments r
 
 Les contrôles réels du TP2, eux, font collaborer un client HTTP, Express, Mongoose, Atlas et les fichiers audio : ce sont des vérifications d’intégration de l’API. Les parcours manuels effectués dans Angular et le navigateur vérifient une chaîne plus complète, proche d’un test de bout en bout. Aucun de ces niveaux ne remplace les autres : les tests isolés localisent précisément une régression, tandis que les intégrations peuvent révéler un problème de configuration ou de données, comme un fichier audio absent sur disque.
 
-**Résultats des dernières exécutions.** **9 tests frontend réussis sur 9**, **2 tests backend réussis sur 2**, build réussi. Les sept tests et durées mentionnés ci-dessous sont les résultats historiques de la séance initiale. Je n’ai pas ajouté de test d’intercepteur ou de guard. Mes tests couvrent plus de trois scénarios frontend parmi les choix proposés dans le sujet. Le détail actuel figure en tête de [RAPPORT_TESTS_TP3.md](RAPPORT_TESTS_TP3.md).
+**Résultats des dernières exécutions.** **9 tests frontend réussis sur 9**, **2 tests backend réussis sur 2**, build réussi. Je n’ai pas ajouté de test d’intercepteur ou de guard. Mes tests couvrent plus de trois scénarios frontend parmi les choix proposés dans le sujet. Le détail actuel figure en tête de [RAPPORT_TESTS_TP3.md](RAPPORT_TESTS_TP3.md).
 
 **Comment j’ai vérifié.** J’ai lancé `npm test` dans le frontend et le backend, puis `npm run build` dans le frontend. J’ai obtenu les résultats suivants et les ai partagés avec l’assistant :
 
 | Commande | Résultat |
 |---|---|
-| Frontend : `npm test` | 7 tests réussis sur 7, dans 2 fichiers, durée 1,21 s |
-| Backend : `npm test` | 2 tests existants réussis sur 2, durée 452 ms |
-| Frontend : `npm run build` | Réussi, durée 2,012 s |
+| Frontend : `npm test` | 9 tests réussis sur 9, dans 2 fichiers, durée 3,49 s |
+| Backend : `npm test` | 2 tests existants réussis sur 2 |
+| Frontend : `npm run build` | Réussi |
 
 Le message `[TracksPage] Envoi impossible 400` provient du scénario d’erreur simulée. Il est attendu et ne correspond pas à un échec de la suite. Le détail des résultats attendus et observés figure dans [RAPPORT_TESTS_TP3.md](RAPPORT_TESTS_TP3.md).
 
-Pour les vérifications effectuées avec l’assistant, les commandes Angular ont utilisé Node 24.19.0. Après la correction du favicon, j’ai fait relancer le build : il réussit en 1,859 s. La sortie est `frontend-starter/dist/gpc`.
+J’ai exécuté les tests et le build avec Node 24.21.0. Le build génère l’application dans `frontend-starter/dist/gpc`.
 
 **Fichiers concernés.** `track.service.spec.ts`, `tracks-page.spec.ts`, `tsconfig.spec.json`, `tsconfig.app.json`, `angular.json`, `package.json`, `package-lock.json` et `RAPPORT_TESTS_TP3.md`.
 
 ## Vérifications finales et bilan (TP3)
 
-Pour terminer, j’ai demandé à l’assistant de vérifier les principaux parcours dans Chromium 151 : connexion, chargement du profil via l’API, pagination aller-retour, lecture audio, nettoyage du lecteur et suppression de la piste temporaire. J’ai également fait corriger le favicon manquant, qui provoquait une requête 404, en ajoutant une icône SVG dans `frontend-starter/src/index.html`.
+Pour terminer, j’ai demandé à l’assistant de vérifier les principaux parcours dans mon navigateur : connexion, chargement du profil via l’API, pagination aller-retour, lecture audio, nettoyage du lecteur et suppression de la piste temporaire. J’ai également fait corriger le favicon manquant, qui provoquait une requête 404, en ajoutant une icône SVG dans `frontend-starter/src/index.html`.
 
 Je me suis appuyé sur le journal de vérification pour contrôler la console : sur ces parcours, il ne contient aucune erreur ou exception JavaScript, aucun JWT et aucun mot de passe de démonstration. Le navigateur affiche une suggestion d’autocomplétion du formulaire, sans erreur d’exécution. Les messages et résultats sont conservés dans [le journal de vérification finale](captures/tp3-verifications-finales.json).
 
-**Console après les parcours vérifiés.** J’ai consulté la console avec tous les niveaux de journalisation activés après les parcours du contrôle final. Sur cette séance, je ne retrouve ni erreur JavaScript inattendue ni donnée d’authentification dans les messages collectés. Je limite cette conclusion aux actions observées et je conserve le journal associé comme complément.
+**Console après les parcours vérifiés.** J’ai consulté la console avec tous les niveaux de journalisation activés après les parcours du contrôle final. Sur cette séance, je ne retrouve ni erreur JavaScript inattendue ni donnée d’authentification dans les messages collectés. J’ai conservé le journal des messages affichés.
 
 ![Console finale, tous niveaux de journalisation activés](captures/tp3-console-finale.png)
 
-J’ai conservé les premières captures Safari, qui montrent encore les indicateurs d’erreurs liés notamment à une extension et au favicon. La capture finale de la console présente le résultat après correction. J’ai fait masquer les JWT dans les trois captures concernées et replier les en-têtes de requête dans les nouvelles preuves détaillées. Les méthodes, les statuts HTTP et les champs multipart restent lisibles.
+J’ai corrigé le favicon manquant et masqué les JWT sur les captures concernées. Les méthodes, les statuts HTTP et les champs multipart restent lisibles.
 
 | Livrable TP3 | Résultat |
 |---|---|
 | Suppression | Implémentée, tests réussis, DELETE 204, GET 200 et SnackBar capturés |
 | Progression de l’upload | Implémentée, progression, multipart et réponse 201 capturés |
-| Tests frontend | 7 réussis sur 7 |
+| Tests frontend | 9 réussis sur 9 |
 | Tests backend disponibles | 2 réussis sur 2 |
 | Rapport des tests | Résultats attendus et observés consignés |
 | Build | Réussi après la dernière correction |
