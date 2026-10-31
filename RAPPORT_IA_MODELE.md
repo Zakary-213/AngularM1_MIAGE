@@ -521,6 +521,8 @@ Pendant l’envoi, le titre, le fichier et le bouton sont désactivés. La méth
 | Piste absente ou inaccessible | Message après 404, liste actualisée et état libéré |
 | Progression et succès | Affichage à 25 %, contrôles bloqués, attente après 100 %, succès après 201 |
 | Erreur et nouvel essai | Total inconnu, erreur 400, formulaire conservé et nouvelle requête possible |
+| Erreur de chargement de la bibliothèque | Après 503, erreur affichée, chargement terminé et pistes conservées, puis nouvel essai réussi avec Actualiser |
+| Rejet local d’un format audio refusé | MIME `audio/flac` rejeté avant HTTP, message affiché et aucune requête POST envoyée |
 
 **Pourquoi les tests ne nécessitent-ils pas MongoDB ?** `HttpTestingController` intercepte les requêtes du service. Les tests fournissent les événements avec `event()` et les réponses avec `flush()`, puis vérifient les effets attendus. `http.verify()` contrôle l’absence de requêtes inattendues en attente.
 
