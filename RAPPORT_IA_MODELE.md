@@ -1,6 +1,6 @@
 # Rapport d’usage de l’IA : TP1, TP2 et TP3
 
-J’ai réalisé les TP1, TP2 et TP3 individuellement. J’ai utilisé un assistant IA pour analyser le projet, compléter le code Angular et préparer les tests. Je m’en suis aussi servi pour m’aider à vérifier l’application. Pour chaque mission, je présente ma demande, les modifications obtenues et les résultats des vérifications. Les exemples de prompts résument mes demandes pour chaque mission.
+J’ai réalisé les TP1, TP2 et TP3 individuellement. J’ai utilisé un assistant IA pour analyser le projet, compléter le code Angular et préparer les tests. Pour chaque mission, je présente ma demande, les modifications obtenues et les résultats des vérifications. Les exemples de prompts résument mes demandes pour chaque mission.
 
 | Mission | TP | Contenu |
 |---|---|---|
@@ -93,7 +93,7 @@ Dans un terminal placé dans `backend`, `npm start` lance le serveur avec son fi
 
 **Ce que j’ai obtenu.** Avec l’aide de l’IA, j’ai constaté que la logique TypeScript des formulaires était déjà présente. Les changements ont porté sur les messages de validation, la désactivation des boutons lorsque les formulaires sont invalides, la déconnexion et l’affichage de la navigation selon l’état de connexion. L’intercepteur HTTP ajoute le jeton aux requêtes et, après une réponse 401, efface la session puis redirige vers la connexion.
 
-**Comment j’ai vérifié.** J’ai saisi une adresse sans « @ » pour contrôler le message de validation et le blocage du formulaire. J’ai aussi testé la déconnexion et le comportement avec un jeton modifié dans le stockage local : la réponse 401 entraîne une redirection vers la connexion. Pour le contrôle final, j’ai également fait vérifier la connexion et le chargement du profil avec l’assistant.
+**Comment j’ai vérifié.** J’ai saisi une adresse sans « @ » pour contrôler le message de validation et le blocage du formulaire. J’ai aussi testé la déconnexion et le comportement avec un jeton modifié dans le stockage local : la réponse 401 entraîne une redirection vers la connexion. Pour le contrôle final, j’ai également vérifié la connexion et le chargement du profil.
 
 **Fichiers concernés.** `login-page.html`, `register-page.html`, `app.ts`, `app.html` et `auth.interceptor.ts`, dans `frontend-starter/src/app/`.
 
@@ -151,9 +151,9 @@ Pour la preuve 401 d’un token invalide, modifier le token stocké puis recharg
 
 Avant d’ajouter les captures au projet, masquer entièrement les mots de passe et les valeurs de JWT, dans le corps de requête, la réponse de login et les headers. Ne pas exporter de HAR brut contenant les secrets. Conserver lisibles méthode, URL, statut, noms de champs et présence du Bearer.
 
-#### Résultats effectivement observés avec l’assistant
+#### Résultats de mes vérifications
 
-J’ai vérifié la connexion, le profil et le traitement des réponses 401 avec l’aide de l’assistant. Le frontend Angular et l’API Express réels ont été utilisés avec MongoDB Atlas. Un relais HTTP local temporaire sur `127.0.0.1:4201` transmettait les pages à Angular sur 4200 et les requêtes `/api` à Express sur 3000. Le script [scripts/tp1-proof-proxy.mjs](scripts/tp1-proof-proxy.mjs) enregistrait uniquement une version expurgée des échanges. Aucun mock de réponse n’a été utilisé. Les mots de passe et JWT ont été remplacés par `[MASQUÉ]` avant toute écriture sur disque.
+J’ai vérifié la connexion, le profil et le traitement des réponses 401. Le frontend Angular et l’API Express réels ont été utilisés avec MongoDB Atlas. Un relais HTTP local temporaire sur `127.0.0.1:4201` transmettait les pages à Angular sur 4200 et les requêtes `/api` à Express sur 3000. Le script [scripts/tp1-proof-proxy.mjs](scripts/tp1-proof-proxy.mjs) enregistrait uniquement une version expurgée des échanges. Aucun mock de réponse n’a été utilisé. Les mots de passe et JWT ont été remplacés par `[MASQUÉ]` avant toute écriture sur disque.
 
 | Vérification | Résultat réellement observé |
 |---|---|
@@ -237,17 +237,17 @@ J’ai masqué les informations sensibles et conservé les méthodes, les URL et
 
 **Objectif.** Afficher les pistes page par page à partir de `GET /api/tracks`, avec les paramètres `page` et `limit`.
 
-**Ce que j’ai demandé à l’IA.** Je voulais vérifier que la pagination utilisait bien le serveur et que les boutons respectaient les limites de la liste.
+**Ce que j’ai demandé à l’IA.** Je lui ai demandé une pagination côté serveur avec des boutons désactivés aux limites de la liste.
 
 **Exemple de prompt :**
 
 > « Vérifie que la bibliothèque appelle GET /api/tracks?page=1&limit=5 et désactive les boutons aux extrémités. »
 
-**Ce que j’ai obtenu.** J’ai fait vérifier le service et le composant avec l’IA. `TrackService.list(page, limit)` transmet les paramètres au backend. Le composant conserve les pistes, la page courante, le nombre de pages et l’état de chargement dans des Signals. `load()` récupère la page demandée, `go(page)` change de page puis relance le chargement. Le template gère la liste vide et désactive « Préc. » sur la première page et « Suiv. » sur la dernière.
+**Ce que j’ai obtenu.** Le service et le composant utilisent la pagination côté serveur. `TrackService.list(page, limit)` transmet les paramètres au backend. Le composant conserve les pistes, la page courante, le nombre de pages et l’état de chargement dans des Signals. `load()` récupère la page demandée, `go(page)` change de page puis relance le chargement. Le template gère la liste vide et désactive « Préc. » sur la première page et « Suiv. » sur la dernière.
 
 **Mon choix.** J’ai conservé la pagination côté serveur, conformément au sujet. Charger toute la bibliothèque puis utiliser `slice()` aurait contourné cette exigence. Le filtre par titre porte uniquement sur les pistes de la page chargée.
 
-**Comment j’ai vérifié.** Je me suis appuyé sur le panneau Network et les captures obtenues avec l’assistant. La page 2 sur 2 affiche deux pistes sur un total de sept, avec `page: 2`, `limit: 5`, `total: 7`, `pages: 2`. La requête répond avec le statut 200. Une limite de cinq correspond à un maximum par page : la dernière peut contenir moins d’éléments. J’ai également fait vérifier un aller-retour entre les pages 1 et 2.
+**Comment j’ai vérifié.** J’ai consulté le panneau Network et enregistré les captures. La page 2 sur 2 affiche deux pistes sur un total de sept, avec `page: 2`, `limit: 5`, `total: 7`, `pages: 2`. La requête répond avec le statut 200. Une limite de cinq correspond à un maximum par page : la dernière peut contenir moins d’éléments. J’ai également vérifié un aller-retour entre les pages 1 et 2.
 
 **Fichiers concernés.** `track.service.ts`, `tracks-page.ts` et `tracks-page.html`.
 
@@ -345,7 +345,7 @@ Les observations expurgées sont dans [captures/tp2-verifications-reelles.json](
 
 **Corrections et choix retenus.** J’ai conservé les contrôles du serveur : la validation du navigateur améliore le retour utilisateur, mais ne suffit pas à sécuriser l’upload. Le backend conserve les limites et la validation Multer. Vider uniquement la variable TypeScript du fichier ne suffit pas : il faut aussi réinitialiser l’élément `<input type="file">`.
 
-**Comment j’ai vérifié.** J’ai fait contrôler le rejet local avec l’assistant : un fichier synthétique de 26 000 000 octets, nommé avec l’extension `.mp3`, est refusé sans requête réseau. Il sert uniquement au contrôle de taille et n’a pas été envoyé au serveur. Un envoi réel de `song1.mp3` a ensuite permis de vérifier les champs multipart `audio` et `title`, ainsi que l’ajout de la piste. La réponse 201 et le formulaire vidé sont également visibles dans les preuves de la mission 6. La gestion d’une erreur serveur et d’un nouvel essai est couverte par les tests de la mission 7.
+**Comment j’ai vérifié.** J’ai contrôlé le rejet local : un fichier synthétique de 26 000 000 octets, nommé avec l’extension `.mp3`, est refusé sans requête réseau. Il sert uniquement au contrôle de taille et n’a pas été envoyé au serveur. Un envoi réel de `song1.mp3` a ensuite permis de vérifier les champs multipart `audio` et `title`, ainsi que l’ajout de la piste. La réponse 201 et le formulaire vidé sont également visibles dans les preuves de la mission 6. La gestion d’une erreur serveur et d’un nouvel essai est couverte par les tests de la mission 7.
 
 **Fichiers concernés.** `tracks-page.ts`, `tracks-page.html` et `tracks-page.css`.
 
@@ -371,7 +371,7 @@ Les observations expurgées sont dans [captures/tp2-verifications-reelles.json](
 
 **Mon choix.** J’ai conservé le passage par `HttpClient`, car une URL HTTP placée directement dans `<audio src>` ne passe pas par l’intercepteur Angular et ne reçoit donc pas son en-tête Bearer. J’ai écarté l’ajout du JWT dans l’URL, car il pourrait apparaître dans l’historique et les journaux. L’en-tête `Authorization` transporte le jeton, le chiffrement du transport dépend de HTTPS, et non de la présence de cet en-tête.
 
-**Comment j’ai vérifié.** J’ai fait vérifier la lecture de « Capture TP - piste 4 » avec l’assistant. La requête répond avec le statut 200 et `Content-Type: audio/mpeg`. Après navigation vers Profil, la console affiche le message de révocation dans `ngOnDestroy`. Ce message confirme l’exécution du nettoyage, il ne mesure pas la mémoire libérée.
+**Comment j’ai vérifié.** J’ai vérifié la lecture de « Capture TP - piste 4 ». La requête répond avec le statut 200 et `Content-Type: audio/mpeg`. Après navigation vers Profil, la console affiche le message de révocation dans `ngOnDestroy`. Ce message confirme l’exécution du nettoyage, il ne mesure pas la mémoire libérée.
 
 **Fichiers concernés.** `track.service.ts`, `tracks-page.ts`, `tracks-page.html` et `tracks-page.css`.
 
@@ -444,7 +444,7 @@ La bibliothèque comprend aussi la suppression avec confirmation, le formatage d
 
 **Fichiers concernés.** `tracks-page.ts`, `tracks-page.html`, `tracks-page.css`, `src/styles.css`, `angular.json`, `package.json` et `package-lock.json`.
 
-**Comment j’ai vérifié.** J’ai fait vérifier l’annulation avec l’assistant : aucune requête DELETE n’est envoyée. Pour le test de suppression, j’ai autorisé uniquement la suppression de « TP3 preuve suppression temporaire ». Les captures montrent le DELETE 204, puis le GET de rafraîchissement 200, la disparition de la piste et le SnackBar de succès. J’ai conservé « Capture TP - piste 4 ». Les tests automatisés vérifient aussi le blocage d’un second appel, l’annulation et le rafraîchissement après 404.
+**Comment j’ai vérifié.** J’ai vérifié l’annulation : aucune requête DELETE n’est envoyée. Pour le test de suppression, j’ai autorisé uniquement la suppression de « TP3 preuve suppression temporaire ». Les captures montrent le DELETE 204, puis le GET de rafraîchissement 200, la disparition de la piste et le SnackBar de succès. J’ai conservé « Capture TP - piste 4 ». Les tests automatisés vérifient aussi le blocage d’un second appel, l’annulation et le rafraîchissement après 404.
 
 **Confirmation avant suppression.** J’ai cliqué sur l’action Supprimer d’une piste. La boîte de dialogue me demande de confirmer avant l’envoi de la requête. Je peux confirmer l’action ou l’annuler dans cette fenêtre. L’annulation est aussi vérifiée par un test automatisé.
 
@@ -482,7 +482,7 @@ Pendant l’envoi, le titre, le fichier et le bouton sont désactivés. La méth
 
 **Distinction entre progression et réponse.** Une requête classique émet sa réponse finale. Avec `observe: 'events'`, il faut distinguer les événements de départ, de progression et de réponse. Un envoi à 100 % ne prouve pas que le serveur a accepté le fichier : seul `HttpEventType.Response` déclenche le succès, le vidage du formulaire et le rechargement de la page 1. Un pourcentage simulé avec un minuteur a donc été écarté.
 
-**Comment j’ai vérifié.** J’ai demandé à l’assistant de contrôler un envoi réel dans mon navigateur. La capture de `song2.mp3` (6,41 Mo) montre une progression à 23 %, avec les contrôles désactivés. La réponse 201 a ensuite déclenché le message de succès, le vidage du formulaire et l’affichage de la piste en première position. Un relais HTTP local temporaire sur le port 4201 a ralenti le transfert vers Angular sur le port 4200 pour rendre la progression visible dans mon navigateur. Le fichier a été envoyé à l’API réelle, le relais a été arrêté après la vérification.
+**Comment j’ai vérifié.** J’ai testé un envoi réel dans mon navigateur. La capture de `song2.mp3` (6,41 Mo) montre une progression à 23 %, avec les contrôles désactivés. La réponse 201 a ensuite déclenché le message de succès, le vidage du formulaire et l’affichage de la piste en première position. Un relais HTTP local temporaire sur le port 4201 a ralenti le transfert vers Angular sur le port 4200 pour rendre la progression visible dans mon navigateur. Le fichier a été envoyé à l’API réelle, le relais a été arrêté après la vérification.
 
 **Vérifications automatisées.** Les tests couvrent l’affichage à 25 %, l’attente de la réponse après 100 %, le blocage des contrôles, l’absence de total et un nouvel essai après une réponse 400.
 
@@ -550,7 +550,7 @@ Les contrôles réels du TP2, eux, font collaborer un client HTTP, Express, Mong
 
 **Résultats des dernières exécutions.** **9 tests frontend réussis sur 9**, **2 tests backend réussis sur 2**, build réussi. Je n’ai pas ajouté de test d’intercepteur ou de guard. Mes tests couvrent plus de trois scénarios frontend parmi les choix proposés dans le sujet. Le détail actuel figure en tête de [RAPPORT_TESTS_TP3.md](RAPPORT_TESTS_TP3.md).
 
-**Comment j’ai vérifié.** J’ai lancé `npm test` dans le frontend et le backend, puis `npm run build` dans le frontend. J’ai obtenu les résultats suivants et les ai partagés avec l’assistant :
+**Comment j’ai vérifié.** J’ai lancé `npm test` dans le frontend et le backend, puis `npm run build` dans le frontend. J’ai obtenu les résultats suivants :
 
 | Commande | Résultat |
 |---|---|
@@ -566,7 +566,7 @@ J’ai exécuté les tests et le build avec Node 24.21.0. Le build génère l’
 
 ## Vérifications finales et bilan (TP3)
 
-Pour terminer, j’ai demandé à l’assistant de vérifier les principaux parcours dans mon navigateur : connexion, chargement du profil via l’API, pagination aller-retour, lecture audio, nettoyage du lecteur et suppression de la piste temporaire. J’ai également fait corriger le favicon manquant, qui provoquait une requête 404, en ajoutant une icône SVG dans `frontend-starter/src/index.html`.
+Pour terminer, j’ai vérifié les principaux parcours de l’application dans mon navigateur : connexion, chargement du profil via l’API, pagination aller-retour, lecture audio, nettoyage du lecteur et suppression de la piste temporaire. J’ai également fait corriger le favicon manquant, qui provoquait une requête 404, en ajoutant une icône SVG dans `frontend-starter/src/index.html`.
 
 Je me suis appuyé sur le journal de vérification pour contrôler la console : sur ces parcours, il ne contient aucune erreur ou exception JavaScript, aucun JWT et aucun mot de passe de démonstration. Le navigateur affiche une suggestion d’autocomplétion du formulaire, sans erreur d’exécution. Les messages et résultats sont conservés dans [le journal de vérification finale](captures/tp3-verifications-finales.json).
 

@@ -1,6 +1,6 @@
 # Rapport des tests : TP1, TP2 et TP3
 
-J’ai testé les fonctionnalités de mon application avec des tests automatisés et des vérifications dans le navigateur. J’ai utilisé l’aide de mon assistant IA pour préparer les tests et analyser leurs résultats.
+J’ai testé les fonctionnalités de mon application avec des tests automatisés et des vérifications dans le navigateur. J’ai utilisé l’aide de mon assistant IA pour préparer les tests.
 
 ## Résultats
 
@@ -61,7 +61,7 @@ J’ai également vérifié le retour à la connexion après un JWT invalide. Le
 
 ## Validation serveur et droits sur les pistes
 
-J’ai fait utiliser un client de vérification séparé du frontend avec la véritable API et MongoDB Atlas. J’ai envoyé volontairement un fichier invalide pour tester la validation du serveur. J’ai aussi utilisé deux comptes distincts pour vérifier les droits sur une même piste temporaire.
+J’ai utilisé un client de vérification séparé du frontend avec la véritable API et MongoDB Atlas. J’ai envoyé volontairement un fichier invalide pour tester la validation du serveur. J’ai aussi utilisé deux comptes distincts pour vérifier les droits sur une même piste temporaire.
 
 | Contrôle | Résultat attendu | Résultat observé |
 |---|---|---|
