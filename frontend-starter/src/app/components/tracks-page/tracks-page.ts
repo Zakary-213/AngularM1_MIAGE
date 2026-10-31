@@ -21,6 +21,7 @@ export class TracksPageComponent implements OnDestroy {
   readonly page = signal(1);
   readonly pages = signal(1);
   readonly loading = signal(false);
+  readonly listError = signal<string | null>(null);
   readonly uploading = signal(false);
   readonly uploadProgress = signal<number | null>(null);
   readonly uploadError = signal<string | null>(null);
@@ -78,6 +79,7 @@ export class TracksPageComponent implements OnDestroy {
   }
 
   load(): void {
+    this.listError.set(null);
     this.loading.set(true);
     this.service.list(this.page()).subscribe({
       next: (response) => {
@@ -86,8 +88,11 @@ export class TracksPageComponent implements OnDestroy {
         this.pages.set(response.pages);
         this.loading.set(false);
       },
-      error: (error) => {
-        console.error('[TracksPage] Chargement impossible', error);
+      error: (error: HttpErrorResponse) => {
+        console.error('[TracksPage] Chargement impossible', error.status);
+        this.listError.set(error.status === 0
+          ? 'Serveur injoignable. Vérifiez votre connexion puis cliquez sur Actualiser.'
+          : 'Impossible de charger les morceaux. Cliquez sur Actualiser pour réessayer.');
         this.loading.set(false);
       },
     });
@@ -105,9 +110,13 @@ export class TracksPageComponent implements OnDestroy {
     // 1. Validation de l'Upload (Sécurité côté Navigateur)
     // Bloquer si le fichier dépasse 25 Mo (25 000 000 octets) ou n'est pas un format audio
     const MAX_FILE_SIZE = 25_000_000;
-    const isAudio =
-      this.file.type.startsWith('audio/') ||
-      /\.(mp3|wav|ogg|m4a|aac|flac|webm)$/i.test(this.file.name);
+    // Même liste MIME que Multer ; une extension ne doit pas contourner
+    // un type explicitement refusé (par exemple text/plain ou audio/flac).
+    const allowedTypes = new Set([
+      'audio/mpeg', 'audio/wav', 'audio/x-wav', 'audio/ogg', 'audio/mp4', 'audio/x-m4a',
+    ]);
+    const isAudio = allowedTypes.has(this.file.type) ||
+      (!this.file.type && /\.(mp3|wav|ogg|m4a|mp4)$/i.test(this.file.name));
 
     if (this.file.size > MAX_FILE_SIZE || !isAudio) {
       this.uploadSuccess.set(false);

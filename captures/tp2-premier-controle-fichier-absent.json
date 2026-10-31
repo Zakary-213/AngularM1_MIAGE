@@ -1,0 +1,68 @@
+{
+  "date": "2026-10-31",
+  "source": "Requêtes fetch du client de vérification vers API Express réelle et MongoDB Atlas",
+  "passed": false,
+  "records": [
+    {
+      "method": "POST",
+      "url": "/api/tracks",
+      "status": 400,
+      "authorization": "Bearer [MASQUÉ]",
+      "request": {
+        "multipart": {
+          "audio": {
+            "filename": "tp2-invalide.txt",
+            "type": "text/plain"
+          },
+          "title": "TP2 refus MIME"
+        }
+      },
+      "response": {
+        "message": "Format audio non accepté"
+      }
+    },
+    {
+      "method": "GET",
+      "url": "/api/tracks/6ac74a09f2a14058a8f9c510/audio",
+      "status": 404,
+      "authorization": "Bearer [MASQUÉ]",
+      "request": {
+        "account": "propriétaire demo@example.com"
+      },
+      "response": {
+        "contentType": "text/html; charset=utf-8",
+        "bytes": 295
+      }
+    },
+    {
+      "method": "GET",
+      "url": "/api/users/me",
+      "status": 200,
+      "authorization": "Bearer [MASQUÉ]",
+      "request": {
+        "account": "second compte temporaire"
+      },
+      "response": {
+        "id": "6ae64435950128484e35cf23",
+        "name": "TP2 vérification temporaire"
+      }
+    },
+    {
+      "method": "GET",
+      "url": "/api/tracks/6ac74a09f2a14058a8f9c510/audio",
+      "status": 404,
+      "authorization": "Bearer [MASQUÉ]",
+      "request": {
+        "account": "second compte temporaire",
+        "differentUser": true
+      },
+      "response": {
+        "message": "Piste inconnue"
+      }
+    }
+  ],
+  "cleanup": {
+    "temporaryUserDeleted": true,
+    "existingTracksUnchanged": true
+  }
+}

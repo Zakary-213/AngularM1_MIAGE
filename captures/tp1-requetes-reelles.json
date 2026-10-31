@@ -1,0 +1,232 @@
+{
+  "date": "2026-10-31",
+  "source": "Relais HTTP local ; réponses API réelles ; aucun mock",
+  "records": [
+    {
+      "observedAt": "2026-10-31T19:28:35.217Z",
+      "method": "POST",
+      "url": "/api/auth/login",
+      "authorization": "absent",
+      "requestContentType": "application/json",
+      "requestBody": {
+        "email": "demo@example.com",
+        "password": "[MASQUÉ]"
+      },
+      "status": 200,
+      "responseContentType": "application/json; charset=utf-8",
+      "responseBody": {
+        "token": "[MASQUÉ]",
+        "user": {
+          "id": "6aabe2072473982beea4ffeb",
+          "name": "Demo",
+          "email": "demo@example.com",
+          "createdAt": "2026-09-17T12:50:15.145Z"
+        }
+      }
+    },
+    {
+      "observedAt": "2026-10-31T19:28:35.260Z",
+      "method": "GET",
+      "url": "/api/tracks?page=1&limit=5",
+      "authorization": "Bearer [MASQUÉ]",
+      "requestContentType": null,
+      "requestBody": null,
+      "status": 200,
+      "responseContentType": "application/json; charset=utf-8",
+      "responseBody": {
+        "items": [
+          {
+            "ownerId": "6aabe2072473982beea4ffeb",
+            "title": "Capture TP — progression",
+            "originalName": "song2.mp3",
+            "mimeType": "audio/mpeg",
+            "size": 6405141,
+            "createdAt": "2026-10-08T07:45:13.819Z",
+            "updatedAt": "2026-10-08T07:45:13.819Z",
+            "__v": 0,
+            "id": "6ac74a09f2a14058a8f9c510"
+          },
+          {
+            "ownerId": "6aabe2072473982beea4ffeb",
+            "title": "Capture TP — piste 4",
+            "originalName": "song1.mp3",
+            "mimeType": "audio/mpeg",
+            "size": 3605337,
+            "createdAt": "2026-10-08T07:41:09.426Z",
+            "updatedAt": "2026-10-08T07:41:09.426Z",
+            "__v": 0,
+            "id": "6ac74915f2a14058a8f9c50f"
+          },
+          {
+            "ownerId": "6aabe2072473982beea4ffeb",
+            "title": "Capture TP — piste 3",
+            "originalName": "song1.mp3",
+            "mimeType": "audio/mpeg",
+            "size": 3605337,
+            "createdAt": "2026-10-08T07:40:58.683Z",
+            "updatedAt": "2026-10-08T07:40:58.683Z",
+            "__v": 0,
+            "id": "6ac7490af2a14058a8f9c50e"
+          },
+          {
+            "ownerId": "6aabe2072473982beea4ffeb",
+            "title": "Capture TP — piste 2",
+            "originalName": "song1.mp3",
+            "mimeType": "audio/mpeg",
+            "size": 3605337,
+            "createdAt": "2026-10-08T07:40:43.348Z",
+            "updatedAt": "2026-10-08T07:40:43.348Z",
+            "__v": 0,
+            "id": "6ac748fbf2a14058a8f9c50d"
+          },
+          {
+            "ownerId": "6aabe2072473982beea4ffeb",
+            "title": "Capture TP — piste 1",
+            "originalName": "song1.mp3",
+            "mimeType": "audio/mpeg",
+            "size": 3605337,
+            "createdAt": "2026-10-08T07:38:36.929Z",
+            "updatedAt": "2026-10-08T07:38:36.929Z",
+            "__v": 0,
+            "id": "6ac7487cf2a14058a8f9c50c"
+          }
+        ],
+        "page": 1,
+        "limit": 5,
+        "total": 7,
+        "pages": 2
+      }
+    },
+    {
+      "observedAt": "2026-10-31T19:28:45.978Z",
+      "method": "POST",
+      "url": "/api/auth/login",
+      "authorization": "absent",
+      "requestContentType": "application/json",
+      "requestBody": {
+        "email": "demo@example.com",
+        "password": "[MASQUÉ]"
+      },
+      "status": 401,
+      "responseContentType": "application/json; charset=utf-8",
+      "responseBody": {
+        "message": "Identifiants incorrects"
+      }
+    },
+    {
+      "observedAt": "2026-10-31T19:28:54.180Z",
+      "method": "POST",
+      "url": "/api/auth/login",
+      "authorization": "absent",
+      "requestContentType": "application/json",
+      "requestBody": {
+        "email": "demo@example.com",
+        "password": "[MASQUÉ]"
+      },
+      "status": 200,
+      "responseContentType": "application/json; charset=utf-8",
+      "responseBody": {
+        "token": "[MASQUÉ]",
+        "user": {
+          "id": "6aabe2072473982beea4ffeb",
+          "name": "Demo",
+          "email": "demo@example.com",
+          "createdAt": "2026-09-17T12:50:15.145Z"
+        }
+      }
+    },
+    {
+      "observedAt": "2026-10-31T19:28:54.257Z",
+      "method": "GET",
+      "url": "/api/tracks?page=1&limit=5",
+      "authorization": "Bearer [MASQUÉ]",
+      "requestContentType": null,
+      "requestBody": null,
+      "status": 304,
+      "responseContentType": null,
+      "responseBody": "[Corps non JSON omis]"
+    },
+    {
+      "observedAt": "2026-10-31T19:29:00.212Z",
+      "method": "GET",
+      "url": "/api/users/me",
+      "authorization": "Bearer [MASQUÉ]",
+      "requestContentType": null,
+      "requestBody": null,
+      "status": 200,
+      "responseContentType": "application/json; charset=utf-8",
+      "responseBody": {
+        "id": "6aabe2072473982beea4ffeb",
+        "name": "Demo",
+        "email": "demo@example.com",
+        "createdAt": "2026-09-17T12:50:15.145Z"
+      }
+    },
+    {
+      "observedAt": "2026-10-31T19:29:04.453Z",
+      "method": "PUT",
+      "url": "/api/users/me",
+      "authorization": "Bearer [MASQUÉ]",
+      "requestContentType": "application/json",
+      "requestBody": {
+        "name": "Demo TP1"
+      },
+      "status": 200,
+      "responseContentType": "application/json; charset=utf-8",
+      "responseBody": {
+        "id": "6aabe2072473982beea4ffeb",
+        "name": "Demo TP1",
+        "email": "demo@example.com",
+        "createdAt": "2026-09-17T12:50:15.145Z"
+      }
+    },
+    {
+      "observedAt": "2026-10-31T19:29:08.325Z",
+      "method": "GET",
+      "url": "/api/users/me",
+      "authorization": "Bearer [MASQUÉ]",
+      "requestContentType": null,
+      "requestBody": null,
+      "status": 200,
+      "responseContentType": "application/json; charset=utf-8",
+      "responseBody": {
+        "id": "6aabe2072473982beea4ffeb",
+        "name": "Demo TP1",
+        "email": "demo@example.com",
+        "createdAt": "2026-09-17T12:50:15.145Z"
+      }
+    },
+    {
+      "observedAt": "2026-10-31T19:29:12.962Z",
+      "method": "PUT",
+      "url": "/api/users/me",
+      "authorization": "Bearer [MASQUÉ]",
+      "requestContentType": "application/json",
+      "requestBody": {
+        "name": "Demo"
+      },
+      "status": 200,
+      "responseContentType": "application/json; charset=utf-8",
+      "responseBody": {
+        "id": "6aabe2072473982beea4ffeb",
+        "name": "Demo",
+        "email": "demo@example.com",
+        "createdAt": "2026-09-17T12:50:15.145Z"
+      }
+    },
+    {
+      "observedAt": "2026-10-31T19:29:22.322Z",
+      "method": "GET",
+      "url": "/api/users/me",
+      "authorization": "Bearer [MASQUÉ]",
+      "testCondition": "JWT remplacé par un jeton invalide dans le relais, avant envoi à l’API",
+      "requestContentType": null,
+      "requestBody": null,
+      "status": 401,
+      "responseContentType": "application/json; charset=utf-8",
+      "responseBody": {
+        "message": "Jeton invalide ou expiré"
+      }
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "date": "2026-10-31",
+  "source": "Requêtes fetch du client de vérification vers API Express réelle et MongoDB Atlas",
+  "passed": true,
+  "createdTrackId": "6ae6449c950128484e35cf25",
+  "records": [
+    {
+      "method": "POST",
+      "url": "/api/tracks",
+      "status": 201,
+      "authorization": "Bearer [MASQUÉ]",
+      "request": {
+        "multipart": {
+          "audio": {
+            "filename": "tp2-preuve-temporaire.mp3",
+            "type": "audio/mpeg"
+          },
+          "title": "TP2 preuve temporaire f865fc36-2ef2-4383-91a9-602c3290e819"
+        }
+      },
+      "response": {
+        "id": "6ae6449c950128484e35cf25",
+        "title": "TP2 preuve temporaire f865fc36-2ef2-4383-91a9-602c3290e819"
+      }
+    },
+    {
+      "method": "POST",
+      "url": "/api/tracks",
+      "status": 400,
+      "authorization": "Bearer [MASQUÉ]",
+      "request": {
+        "multipart": {
+          "audio": {
+            "filename": "tp2-invalide.txt",
+            "type": "text/plain"
+          },
+          "title": "TP2 refus MIME"
+        }
+      },
+      "response": {
+        "message": "Format audio non accepté"
+      }
+    },
+    {
+      "method": "GET",
+      "url": "/api/tracks/6ae6449c950128484e35cf25/audio",
+      "status": 200,
+      "authorization": "Bearer [MASQUÉ]",
+      "request": {
+        "account": "propriétaire demo@example.com"
+      },
+      "response": {
+        "contentType": "audio/mpeg",
+        "bytes": 3605337
+      }
+    },
+    {
+      "method": "GET",
+      "url": "/api/users/me",
+      "status": 200,
+      "authorization": "Bearer [MASQUÉ]",
+      "request": {
+        "account": "second compte temporaire"
+      },
+      "response": {
+        "id": "6ae6448f950128484e35cf24",
+        "name": "TP2 vérification temporaire"
+      }
+    },
+    {
+      "method": "GET",
+      "url": "/api/tracks/6ae6449c950128484e35cf25/audio",
+      "status": 404,
+      "authorization": "Bearer [MASQUÉ]",
+      "request": {
+        "account": "second compte temporaire",
+        "differentUser": true
+      },
+      "response": {
+        "message": "Piste inconnue"
+      }
+    }
+  ],
+  "cleanup": {
+    "temporaryUserDeleted": true,
+    "temporaryTrackDeleted": true,
+    "existingTracksUnchanged": true
+  }
+}

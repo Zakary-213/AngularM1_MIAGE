@@ -54,6 +54,24 @@ describe('TracksPage — suppression et upload', () => {
     expect(snackBar.open).toHaveBeenCalledWith('Piste "Solo test" supprimée.', 'Fermer', expect.any(Object));
   });
 
+  it('affiche une erreur de liste puis permet de réessayer sans perdre les pistes', () => {
+    component.load();
+    const failed = http.expectOne('/api/tracks?page=1&limit=5');
+    expect(failed.request.method).toBe('GET');
+    failed.flush({ message: 'Indisponible' }, { status: 503, statusText: 'Service Unavailable' });
+    fixture.detectChanges();
+    expect(component.loading()).toBe(false);
+    expect(component.tracks()).toEqual([track]);
+    expect(fixture.nativeElement.querySelector('[role="alert"]').textContent).toContain('Impossible de charger');
+    fixture.nativeElement.querySelector('.header-actions button').click();
+    expect(component.loading()).toBe(true);
+    expect(component.listError()).toBeNull();
+    http.expectOne('/api/tracks?page=1&limit=5').flush(page);
+    fixture.detectChanges();
+    expect(component.loading()).toBe(false);
+    expect(fixture.nativeElement.querySelector('[role="alert"]')).toBeNull();
+  });
+
   it('n’envoie aucune suppression si la confirmation est annulée', () => {
     vi.spyOn(window, 'confirm').mockReturnValue(false);
     component.delete(track);
@@ -78,6 +96,15 @@ describe('TracksPage — suppression et upload', () => {
     component.upload();
     return http.expectOne('/api/tracks');
   }
+
+  it('refuse avant HTTP un type audio non accepté par le backend', () => {
+    component.file = new File(['audio'], 'solo.flac', { type: 'audio/flac' });
+    component.upload();
+    http.expectNone(request => request.method === 'POST');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('[role="alert"]').textContent).toContain('format audio valide');
+    expect(component.uploading()).toBe(false);
+  });
 
   it('affiche la progression et attend la réponse finale avant le succès', () => {
     const request = startUpload();

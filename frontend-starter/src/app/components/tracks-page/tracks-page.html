@@ -90,6 +90,9 @@
       @if (loading()) {
         <p class="status-info">Chargement des morceaux…</p>
       }
+      @if (listError()) {
+        <p class="error" role="alert">{{ listError() }}</p>
+      }
 
       <!-- Liste des pistes sous forme de cards -->
       <div class="tracks-list">
@@ -143,6 +146,7 @@
             </div>
           </div>
         } @empty {
+          @if (!loading() && !listError()) {
           <p class="empty-state">
             @if (searchFilter()) {
               Aucun morceau ne correspond à votre recherche.
@@ -150,6 +154,7 @@
               Aucune piste dans votre bibliothèque.
             }
           </p>
+          }
         }
       </div>
 
