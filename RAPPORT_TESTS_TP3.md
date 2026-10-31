@@ -1,4 +1,4 @@
-# Rapport des tests — TP1, TP2 et TP3
+# Rapport des tests : TP1, TP2 et TP3
 
 J’ai testé les fonctionnalités de mon application avec des tests automatisés et des vérifications dans le navigateur. J’ai utilisé l’aide de mon assistant IA pour préparer les tests et analyser leurs résultats.
 

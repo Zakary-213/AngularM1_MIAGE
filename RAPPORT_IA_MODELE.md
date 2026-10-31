@@ -1,4 +1,4 @@
-# Rapport d’usage de l’IA — TP1, TP2 et TP3
+# Rapport d’usage de l’IA : TP1, TP2 et TP3
 
 J’ai réalisé les TP1, TP2 et TP3 individuellement. J’ai utilisé un assistant IA pour analyser le projet, compléter le code Angular et préparer les tests. Je m’en suis aussi servi pour m’aider à vérifier l’application. Pour chaque mission, je présente ma demande, les modifications obtenues et les résultats des vérifications. Les exemples de prompts résument mes demandes pour chaque mission.
 
@@ -12,7 +12,7 @@ J’ai réalisé les TP1, TP2 et TP3 individuellement. J’ai utilisé un assist
 | 6 | TP3 | Progression de l’upload |
 | 7 | TP3 | Tests automatisés |
 
-## Mission 0 — Cartographie de l’application (TP1)
+## Mission 0 : Cartographie de l’application (TP1)
 
 **Objectif.** Comprendre le trajet d’une requête avant de modifier l’application.
 
@@ -81,7 +81,7 @@ Pour les routes protégées, un token absent, invalide ou expiré entraîne une 
 
 Dans un terminal placé dans `backend`, `npm start` lance le serveur avec son fichier `.env` local. Les `console.log`, `console.warn` et `console.error` du backend apparaissent dans ce terminal. Le middleware de `createApp()` écrit à la fin des requêtes leur méthode, URL, statut et durée, par exemple sous la forme `[http] GET /api/users/me -> 200 (...)`. Les préfixes `[auth]` et `[user]` permettent de suivre l’authentification et le profil. Cet exemple décrit le format du code, sans prétendre être une nouvelle trace capturée. Les DevTools du navigateur montrent les échanges HTTP et les logs Angular, ils n’affichent pas directement les logs du processus Node.
 
-## Mission 1 — Inscription, connexion et profil (TP1)
+## Mission 1 : Inscription, connexion et profil (TP1)
 
 **Objectif.** Compléter les formulaires d’authentification, la déconnexion et le traitement des réponses 401.
 
@@ -233,7 +233,7 @@ J’ai masqué les informations sensibles et conservé les méthodes, les URL et
 
 ![Response : données publiques du profil retournées par l’API](captures/tp1-network-profil200-reponse.png)
 
-## Mission 2 — Bibliothèque paginée (TP2)
+## Mission 2 : Bibliothèque paginée (TP2)
 
 **Objectif.** Afficher les pistes page par page à partir de `GET /api/tracks`, avec les paramètres `page` et `limit`.
 
@@ -259,7 +259,7 @@ J’ai masqué les informations sensibles et conservé les méthodes, les URL et
 
 ![GET page=2 et limit=5 avec statut HTTP 200](captures/tp2-pagination-entetes.png)
 
-## Mission 3 — Upload, validation et lecture audio (TP2)
+## Mission 3 : Upload, validation et lecture audio (TP2)
 
 ### Cartographie précise du flux d’upload et des validations
 
@@ -331,7 +331,7 @@ Les observations expurgées sont dans [captures/tp2-verifications-reelles.json](
 
 **Fichiers audio locaux.** J’ai constaté que certaines anciennes pistes sont présentes dans Atlas sans fichier correspondant dans `backend/data/uploads`. Pour vérifier la lecture et les droits, j’ai envoyé un MP3 temporaire. J’ai obtenu 200 avec le propriétaire et 404 avec un autre compte. J’ai ensuite supprimé la piste et le compte temporaires. Les anciens morceaux nécessitent une restauration de leurs fichiers ou un nouvel upload pour être lus sur cette machine.
 
-### Validation et envoi d’un fichier — réalisation initiale
+### Validation et envoi d’un fichier : réalisation initiale
 
 **Objectif.** Vérifier le fichier avant l’envoi et informer l’utilisateur pendant le traitement.
 
@@ -371,7 +371,7 @@ Les observations expurgées sont dans [captures/tp2-verifications-reelles.json](
 
 **Mon choix.** J’ai conservé le passage par `HttpClient`, car une URL HTTP placée directement dans `<audio src>` ne passe pas par l’intercepteur Angular et ne reçoit donc pas son en-tête Bearer. J’ai écarté l’ajout du JWT dans l’URL, car il pourrait apparaître dans l’historique et les journaux. L’en-tête `Authorization` transporte le jeton, le chiffrement du transport dépend de HTTPS, et non de la présence de cet en-tête.
 
-**Comment j’ai vérifié.** J’ai fait vérifier la lecture de « Capture TP — piste 4 » avec l’assistant. La requête répond avec le statut 200 et `Content-Type: audio/mpeg`. Après navigation vers Profil, la console affiche le message de révocation dans `ngOnDestroy`. Ce message confirme l’exécution du nettoyage, il ne mesure pas la mémoire libérée.
+**Comment j’ai vérifié.** J’ai fait vérifier la lecture de « Capture TP - piste 4 » avec l’assistant. La requête répond avec le statut 200 et `Content-Type: audio/mpeg`. Après navigation vers Profil, la console affiche le message de révocation dans `ngOnDestroy`. Ce message confirme l’exécution du nettoyage, il ne mesure pas la mémoire libérée.
 
 **Fichiers concernés.** `track.service.ts`, `tracks-page.ts`, `tracks-page.html` et `tracks-page.css`.
 
@@ -424,7 +424,7 @@ Clic sur Écouter
 
 La bibliothèque comprend aussi la suppression avec confirmation, le formatage des tailles et des dates, un filtre local et la mise en évidence de la piste active. La suppression a été complétée dans la mission 5 du TP3.
 
-## Mission 5 — Suppression d’une piste (TP3)
+## Mission 5 : Suppression d’une piste (TP3)
 
 **Objectif.** Compléter la suppression existante avec un état de requête, un SnackBar et la gestion d’une liste devenue obsolète.
 
@@ -444,7 +444,7 @@ La bibliothèque comprend aussi la suppression avec confirmation, le formatage d
 
 **Fichiers concernés.** `tracks-page.ts`, `tracks-page.html`, `tracks-page.css`, `src/styles.css`, `angular.json`, `package.json` et `package-lock.json`.
 
-**Comment j’ai vérifié.** J’ai fait vérifier l’annulation avec l’assistant : aucune requête DELETE n’est envoyée. Pour le test de suppression, j’ai autorisé uniquement la suppression de « TP3 preuve suppression temporaire ». Les captures montrent le DELETE 204, puis le GET de rafraîchissement 200, la disparition de la piste et le SnackBar de succès. J’ai conservé « Capture TP — piste 4 ». Les tests automatisés vérifient aussi le blocage d’un second appel, l’annulation et le rafraîchissement après 404.
+**Comment j’ai vérifié.** J’ai fait vérifier l’annulation avec l’assistant : aucune requête DELETE n’est envoyée. Pour le test de suppression, j’ai autorisé uniquement la suppression de « TP3 preuve suppression temporaire ». Les captures montrent le DELETE 204, puis le GET de rafraîchissement 200, la disparition de la piste et le SnackBar de succès. J’ai conservé « Capture TP - piste 4 ». Les tests automatisés vérifient aussi le blocage d’un second appel, l’annulation et le rafraîchissement après 404.
 
 **Confirmation avant suppression.** J’ai cliqué sur l’action Supprimer d’une piste. La boîte de dialogue me demande de confirmer avant l’envoi de la requête. Je peux confirmer l’action ou l’annuler dans cette fenêtre. L’annulation est aussi vérifiée par un test automatisé.
 
@@ -466,7 +466,7 @@ La bibliothèque comprend aussi la suppression avec confirmation, le formatage d
 
 ![SnackBar de succès après suppression de la piste temporaire](captures/tp3-suppression-snackbar.png)
 
-## Mission 6 — Progression de l’upload (TP3)
+## Mission 6 : Progression de l’upload (TP3)
 
 **Objectif.** Afficher la progression d’envoi, empêcher une seconde soumission et attendre la réponse du serveur avant d’annoncer le succès.
 
@@ -500,7 +500,7 @@ Pendant l’envoi, le titre, le fichier et le bouton sont désactivés. La méth
 
 ![Multipart contenant audio et title](captures/tp3-upload-multipart.png)
 
-## Mission 7 — Tests automatisés (TP3)
+## Mission 7 : Tests automatisés (TP3)
 
 **Objectif.** Tester le contrat HTTP et les états du composant sans dépendre d’un backend ni de MongoDB.
 
