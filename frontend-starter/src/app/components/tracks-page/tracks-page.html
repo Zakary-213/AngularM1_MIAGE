@@ -10,7 +10,7 @@
     <article class="card">
       <h2>Importer</h2>
       <label>Titre<input [formControl]="title" placeholder="Ex: Solo blues en Lam" /></label>
-      <label>Fichier audio<input #fileInput type="file" accept="audio/*" (change)="choose($event)" /></label>
+      <label>Fichier audio<input #fileInput type="file" [disabled]="uploading()" accept="audio/*" (change)="choose($event)" /></label>
       <button type="button" (click)="upload(fileInput)" [disabled]="!file || uploading()">
         @if (uploading()) {
           Envoi en cours...
@@ -20,13 +20,31 @@
       </button>
 
       @if (uploading()) {
-        <p class="status-info">Envoi en cours vers le serveur…</p>
+        <div class="upload-progress">
+          <label for="upload-progress">Progression de l’envoi</label>
+          @if (uploadProgress(); as percent) {
+            <progress id="upload-progress" max="100" [value]="percent">{{ percent }} %</progress>
+          } @else if (uploadProgress() === 0) {
+            <progress id="upload-progress" max="100" value="0">0 %</progress>
+          } @else {
+            <progress id="upload-progress" max="100"></progress>
+          }
+          <p class="status-info" role="status">
+            @if (uploadProgress() === 100) {
+              Envoi terminé — validation par le serveur…
+            } @else if (uploadProgress() !== null) {
+              Envoi en cours : {{ uploadProgress() }} %
+            } @else {
+              Envoi en cours — taille totale inconnue…
+            }
+          </p>
+        </div>
       }
       @if (uploadError()) {
-        <p class="error">{{ uploadError() }}</p>
+        <p class="error" role="alert">{{ uploadError() }}</p>
       }
       @if (uploadSuccess()) {
-        <p class="success">Succès ! Piste ajoutée à votre bibliothèque.</p>
+        <p class="success" role="status">Succès ! Piste ajoutée à votre bibliothèque.</p>
       }
     </article>
 
@@ -110,11 +128,17 @@
               <button
                 type="button"
                 class="btn-delete"
+                [disabled]="deleting() !== null"
+                [attr.aria-busy]="deleting() === track.id"
                 (click)="delete(track)"
                 [attr.aria-label]="'Supprimer ' + track.title"
                 title="Supprimer la piste"
               >
-                🗑️
+                @if (deleting() === track.id) {
+                  Suppression…
+                } @else {
+                  🗑️
+                }
               </button>
             </div>
           </div>

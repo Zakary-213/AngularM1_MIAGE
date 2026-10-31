@@ -1,21 +1,28 @@
 import { Component, computed, inject, OnDestroy, signal } from '@angular/core';
+import { HttpErrorResponse, HttpEventType } from '@angular/common/http';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { finalize } from 'rxjs';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Track } from '../../shared/models/track.model';
 import { TrackService } from '../../shared/services/track.service';
 
 @Component({
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, MatSnackBarModule],
   templateUrl: './tracks-page.html',
   styleUrl: './tracks-page.css',
 })
 export class TracksPageComponent implements OnDestroy {
   private readonly service = inject(TrackService);
+  private readonly snackBar = inject(MatSnackBar);
+
+  readonly deleting = signal<string | null>(null);
 
   readonly tracks = signal<Track[]>([]);
   readonly page = signal(1);
   readonly pages = signal(1);
   readonly loading = signal(false);
   readonly uploading = signal(false);
+  readonly uploadProgress = signal<number | null>(null);
   readonly uploadError = signal<string | null>(null);
   readonly uploadSuccess = signal(false);
 
@@ -57,6 +64,8 @@ export class TracksPageComponent implements OnDestroy {
   }
 
   choose(event: Event): void {
+    if (this.uploading()) return;
+    this.uploadProgress.set(null);
     this.file = (event.target as HTMLInputElement).files?.[0];
     this.uploadError.set(null);
     this.uploadSuccess.set(false);
@@ -90,7 +99,8 @@ export class TracksPageComponent implements OnDestroy {
   }
 
   upload(fileInput?: HTMLInputElement): void {
-    if (!this.file) return;
+    if (!this.file || this.uploading()) return;
+    this.uploadProgress.set(null);
 
     // 1. Validation de l'Upload (Sécurité côté Navigateur)
     // Bloquer si le fichier dépasse 25 Mo (25 000 000 octets) ou n'est pas un format audio
@@ -115,13 +125,28 @@ export class TracksPageComponent implements OnDestroy {
 
     // 2. L'Expérience Utilisateur (UI/UX) de l'Upload
     this.uploading.set(true);
+    this.uploadProgress.set(0);
+    this.title.disable({ emitEvent: false });
     this.uploadError.set(null);
     this.uploadSuccess.set(false);
 
-    this.service.upload(this.file, this.title.value || this.file.name).subscribe({
-      next: (track) => {
-        console.debug('[TracksPage] Piste envoyée', track.id);
+    this.service.upload(this.file, this.title.value || this.file.name).pipe(
+      finalize(() => {
         this.uploading.set(false);
+        this.title.enable({ emitEvent: false });
+      }),
+    ).subscribe({
+      next: (event) => {
+        if (event.type === HttpEventType.UploadProgress) {
+          this.uploadProgress.set(event.total && event.total > 0
+            ? Math.min(100, Math.round(100 * event.loaded / event.total))
+            : null);
+          return;
+        }
+        // 100 % signifie que les octets sont envoyés, pas que le serveur a accepté la piste.
+        if (event.type !== HttpEventType.Response) return;
+        this.uploadProgress.set(100);
+        console.debug('[TracksPage] Upload accepté par le serveur');
         this.uploadSuccess.set(true);
         this.uploadError.set(null);
         this.title.setValue('');
@@ -133,7 +158,8 @@ export class TracksPageComponent implements OnDestroy {
         this.load();
       },
       error: (error) => {
-        console.error('[TracksPage] Envoi impossible', error);
+        console.error('[TracksPage] Envoi impossible', error.status);
+        this.uploadProgress.set(null);
         this.uploading.set(false);
         this.uploadSuccess.set(false);
         const serverMessage =
@@ -171,34 +197,52 @@ export class TracksPageComponent implements OnDestroy {
   }
 
   delete(track: Track): void {
+    if (this.deleting()) return;
+
     if (!confirm(`Supprimer définitivement la piste "${track.title}" ?`)) {
       return;
     }
 
-    this.service.delete(track.id).subscribe({
+    this.deleting.set(track.id);
+    this.service.delete(track.id).pipe(
+      finalize(() => this.deleting.set(null)),
+    ).subscribe({
       next: () => {
         console.debug('[TracksPage] Piste supprimée', track.id);
-        if (this.currentTrack()?.id === track.id) {
-          const currentUrl = this.audioUrl();
-          if (currentUrl) {
-            URL.revokeObjectURL(currentUrl);
-          }
-          this.audioUrl.set('');
-          this.currentTrack.set(null);
-        }
-        if (this.tracks().length === 1 && this.page() > 1) {
-          this.page.set(this.page() - 1);
-        }
-        this.load();
+        this.removeDeletedTrack(track);
+        this.snackBar.open(`Piste "${track.title}" supprimée.`, 'Fermer', {
+          duration: 5000,
+          panelClass: ['snackbar-success'],
+        });
       },
-      error: (error) => {
-        console.error('[TracksPage] Suppression impossible', error);
-        const message =
-          error?.error?.message ||
-          `Échec de la suppression de la piste "${track.title}".`;
-        this.audioError.set(message);
+      error: (error: HttpErrorResponse) => {
+        console.error('[TracksPage] Suppression impossible', error.status);
+        let message = 'Impossible de supprimer la piste. Réessayez plus tard.';
+        if (error.status === 404 || error.status === 403) {
+          // Le backend renvoie aussi 404 pour une piste appartenant à un autre compte.
+          message = 'Cette piste a déjà été supprimée ou ne vous est pas accessible. La liste a été actualisée.';
+          this.removeDeletedTrack(track);
+        } else if (error.status === 401) {
+          message = 'Votre session a expiré. Reconnectez-vous pour supprimer une piste.';
+        } else if (error.status === 0) {
+          message = 'Serveur injoignable. Vérifiez votre connexion puis réessayez.';
+        }
+        this.snackBar.open(message, 'Fermer', { duration: 7000 });
       },
     });
+  }
+
+  private removeDeletedTrack(track: Track): void {
+    if (this.currentTrack()?.id === track.id) {
+      const currentUrl = this.audioUrl();
+      if (currentUrl) URL.revokeObjectURL(currentUrl);
+      this.audioUrl.set('');
+      this.currentTrack.set(null);
+    }
+    if (this.tracks().length === 1 && this.page() > 1) {
+      this.page.set(this.page() - 1);
+    }
+    this.load();
   }
 
   formatSize(bytes: number): string {

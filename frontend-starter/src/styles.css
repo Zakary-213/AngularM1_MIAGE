@@ -33,3 +33,50 @@ audio { width: 100%; }
   nav { margin-top: 1rem; }
   .grid .card { margin-bottom: 1rem; }
 }
+
+/* Le SnackBar est rendu dans l'overlay global Angular Material. */
+.mat-mdc-snack-bar-container.snackbar-success {
+  --mat-snack-bar-container-color: #123d32;
+  --mat-snack-bar-supporting-text-color: #f2fff8;
+  --mat-snack-bar-button-color: #b5f0d4;
+  --mat-snack-bar-container-shape: 16px;
+  --mat-snack-bar-supporting-text-font: Inter, system-ui, sans-serif;
+  --mat-snack-bar-supporting-text-size: 14px;
+  --mat-snack-bar-supporting-text-weight: 500;
+  --mat-snack-bar-supporting-text-line-height: 22px;
+}
+
+.snackbar-success .mdc-snackbar__surface {
+  border: 1px solid #478b73;
+  box-shadow: 0 8px 28px #123d3233;
+}
+
+.snackbar-success .mat-mdc-simple-snack-bar > .mat-mdc-snack-bar-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  overflow-wrap: anywhere;
+}
+
+.snackbar-success .mat-mdc-simple-snack-bar > .mat-mdc-snack-bar-label::before {
+  content: '✓';
+  display: grid;
+  place-items: center;
+  flex: 0 0 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #276c57;
+  color: #c5f7de;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.snackbar-success .mat-mdc-snack-bar-action {
+  border: 1px solid #478b73;
+  border-radius: 8px;
+}
+
+.snackbar-success .mat-mdc-snack-bar-action:focus-visible {
+  outline: 2px solid #c5f7de;
+  outline-offset: 3px;
+}

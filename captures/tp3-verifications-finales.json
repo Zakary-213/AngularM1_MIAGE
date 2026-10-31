@@ -1,0 +1,77 @@
+{
+  "date": "2026-10-15",
+  "browser": "Chromium 151 - profil de test",
+  "deletedTrack": "TP3 preuve suppression temporaire 15-10",
+  "preservedTrack": "Capture TP — piste 4",
+  "deleteStatus": 204,
+  "refreshStatus": 200,
+  "consoleErrors": [],
+  "jwtInLogs": false,
+  "passwordInLogs": false,
+  "consoleLogs": [
+    {
+      "type": "debug",
+      "text": "[vite] connecting..."
+    },
+    {
+      "type": "debug",
+      "text": "[vite] connected."
+    },
+    {
+      "type": "debug",
+      "text": "[TracksPage] Pistes chargées 5"
+    },
+    {
+      "type": "debug",
+      "text": "[TracksPage] Piste supprimée 6ad08f4d61e464c5f04ab25a"
+    },
+    {
+      "type": "debug",
+      "text": "[TracksPage] Pistes chargées 5"
+    },
+    {
+      "type": "debug",
+      "text": "[vite] connecting..."
+    },
+    {
+      "type": "verbose",
+      "text": "[DOM] Input elements should have autocomplete attributes (suggested: \"current-password\"): (More info: https://goo.gl/9p2vKq) %o"
+    },
+    {
+      "type": "debug",
+      "text": "[vite] connected."
+    },
+    {
+      "type": "debug",
+      "text": "[LoginPage] Connexion réussie"
+    },
+    {
+      "type": "debug",
+      "text": "[TracksPage] Pistes chargées 5"
+    },
+    {
+      "type": "debug",
+      "text": "[TracksPage] Pistes chargées 5"
+    },
+    {
+      "type": "debug",
+      "text": "[TracksPage] Pistes chargées 2"
+    },
+    {
+      "type": "debug",
+      "text": "[TracksPage] Pistes chargées 5"
+    },
+    {
+      "type": "debug",
+      "text": "[TracksPage] Audio chargé 6ac74915f2a14058a8f9c50f"
+    },
+    {
+      "type": "debug",
+      "text": "[TracksPage] ObjectURL révoquée lors de la destruction du composant (ngOnDestroy)"
+    },
+    {
+      "type": "debug",
+      "text": "[ProfilePage] Profil chargé 6aabe2072473982beea4ffeb"
+    }
+  ]
+}

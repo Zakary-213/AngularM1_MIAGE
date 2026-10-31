@@ -250,3 +250,28 @@
   font-size: 0.9rem;
   color: #275246;
 }
+
+.upload-progress {
+  margin-top: 1rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid #c2ded4;
+  border-radius: 12px;
+  background: #f1f8f5;
+}
+
+.upload-progress label {
+  margin: 0 0 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.upload-progress progress {
+  display: block;
+  width: 100%;
+  height: 12px;
+  accent-color: #1d755e;
+}
+
+.upload-progress .status-info {
+  margin-bottom: 0;
+}
