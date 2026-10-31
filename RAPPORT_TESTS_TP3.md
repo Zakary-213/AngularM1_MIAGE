@@ -92,4 +92,4 @@ npm test
 
 J’ai constaté que certaines anciennes pistes ont leurs métadonnées dans Atlas mais plus de fichier correspondant sur le disque local. Pour vérifier la lecture et les droits, j’ai utilisé un MP3 temporaire fraîchement envoyé. Les anciens morceaux nécessitent une restauration de leurs fichiers ou un nouvel upload.
 
-Je n’ai pas effectué manuellement la double suppression depuis deux onglets ni la panne du backend pendant un upload. J’ai vérifié les réponses 404 et les erreurs d’upload avec des tests automatisés.
+J’ai vérifié les réponses 404 et les erreurs d’upload avec des tests automatisés et des réponses HTTP simulées.

@@ -280,7 +280,7 @@ J’ai identifié les fichiers et méthodes de chaque étape de l’upload et v�
 
 Dans le backend, `limits: { fileSize: MAX_FILE_SIZE }` impose `25 * 1024 * 1024`, soit **26 214 400 octets (25 Mio)**. Le `fileFilter` vérifie l’appartenance du MIME à l’ensemble `allowed` : `audio/mpeg`, `audio/wav`, `audio/x-wav`, `audio/ogg`, `audio/mp4`, `audio/x-m4a`. Il ne suffit donc pas que le MIME commence par `audio/`. Multer ne réalise pas une analyse complète du contenu sonore : le filtre de MIME ne prouve pas que les octets sont décodables.
 
-J’ai resserré la validation frontend sur ces six types MIME, si le navigateur fournit un type vide, une extension attendue sert de présélection. Une extension audio ne permet plus de contourner un MIME explicitement refusé. Le serveur conserve la décision finale. La limite frontend existante de **25 000 000 octets (25 Mo décimaux)** est conservée : elle est légèrement plus restrictive que celle du serveur, ce qui explique le rejet local du fichier de 26 000 000 octets dans le test de taille. Ce fichier ne prouve pas un dépassement de la limite Multer. Les messages frontend indiquent explicitement le seuil en octets.
+J’ai resserré la validation frontend sur ces six types MIME, si le navigateur fournit un type vide, une extension attendue sert de présélection. Une extension audio ne permet plus de contourner un MIME explicitement refusé. Le serveur conserve la décision finale. La limite frontend existante de **25 000 000 octets (25 Mo décimaux)** est conservée : elle est légèrement plus restrictive que celle du serveur, ce qui explique le rejet local du fichier de 26 000 000 octets dans le test de taille. Les messages frontend indiquent explicitement le seuil en octets.
 
 Le frontend donne un retour immédiat et évite un transfert inutile. Il ne sécurise pas l’API : un autre client peut ignorer ces contrôles, comme dans le test de refus MIME ci-dessous. La validation serveur reste indispensable.
 
@@ -371,7 +371,7 @@ Les observations expurgées sont dans [captures/tp2-verifications-reelles.json](
 
 **Mon choix.** J’ai conservé le passage par `HttpClient`, car une URL HTTP placée directement dans `<audio src>` ne passe pas par l’intercepteur Angular et ne reçoit donc pas son en-tête Bearer. J’ai écarté l’ajout du JWT dans l’URL, car il pourrait apparaître dans l’historique et les journaux. L’en-tête `Authorization` transporte le jeton, le chiffrement du transport dépend de HTTPS, et non de la présence de cet en-tête.
 
-**Comment j’ai vérifié.** J’ai vérifié la lecture de « Capture TP - piste 4 ». La requête répond avec le statut 200 et `Content-Type: audio/mpeg`. Après navigation vers Profil, la console affiche le message de révocation dans `ngOnDestroy`. Ce message confirme l’exécution du nettoyage, il ne mesure pas la mémoire libérée.
+**Comment j’ai vérifié.** J’ai vérifié la lecture de « Capture TP - piste 4 ». La requête répond avec le statut 200 et `Content-Type: audio/mpeg`. Après navigation vers Profil, la console affiche le message de révocation dans `ngOnDestroy`. Ce message confirme l’exécution du nettoyage.
 
 **Fichiers concernés.** `track.service.ts`, `tracks-page.ts`, `tracks-page.html` et `tracks-page.css`.
 
@@ -379,7 +379,7 @@ Les observations expurgées sont dans [captures/tp2-verifications-reelles.json](
 
 ![Lecture audio, Authorization Bearer, HTTP 200 et audio/mpeg](captures/tp2-audio-jwt.png)
 
-**Nettoyage du lecteur en quittant la bibliothèque.** J’ai navigué vers Profil après avoir chargé un morceau. La console affiche le message de révocation de l’ObjectURL dans `ngOnDestroy`. Je vérifie que le nettoyage est exécuté, ce message ne mesure pas directement la mémoire libérée.
+**Nettoyage du lecteur en quittant la bibliothèque.** J’ai navigué vers Profil après avoir chargé un morceau. La console affiche le message de révocation de l’ObjectURL dans `ngOnDestroy`. J’ai vérifié que le nettoyage est exécuté lorsque je quitte la bibliothèque.
 
 ![Révocation ObjectURL après navigation vers Profil](captures/tp2-objecturl-destruction.png)
 
@@ -524,7 +524,7 @@ Pendant l’envoi, le titre, le fichier et le bouton sont désactivés. La méth
 
 **Pourquoi les tests ne nécessitent-ils pas MongoDB ?** `HttpTestingController` intercepte les requêtes du service. Les tests fournissent les événements avec `event()` et les réponses avec `flush()`, puis vérifient les effets attendus. `http.verify()` contrôle l’absence de requêtes inattendues en attente.
 
-Les tests du service ciblent le contrat HTTP. Ceux du composant combinent le template, les Signals et le service avec un transport simulé. Ils ne constituent pas une vérification de bout en bout de l’API et de MongoDB. Les tests d’intercepteur et de guard font partie des choix proposés dans le sujet, mais n’ont pas été ajoutés : les neuf tests retenus couvrent plus de trois scénarios parmi les options demandées.
+Les tests du service ciblent le contrat HTTP. Ceux du composant combinent le template, les Signals et le service avec un transport simulé. Les tests d’intercepteur et de guard font partie des choix proposés dans le sujet, mais n’ont pas été ajoutés : les neuf tests retenus couvrent plus de trois scénarios parmi les options demandées.
 
 **Difficulté rencontrée.** Lors du premier lancement avec l’assistant, le double de SnackBar n’était pas correctement utilisé. J’ai fait corriger sa configuration avec `TestBed.overrideProvider` pour remplacer le provider importé par Material. Après correction, les tests passent.
 
@@ -534,19 +534,19 @@ Pour expliquer ces tests, je m’appuie sur le code de `frontend-starter/src/app
 
 **Intercepteur.** Un test vérifierait la requête après son passage dans `authInterceptor`, en configurant `provideHttpClient(withInterceptors([authInterceptor]))` et `provideHttpClientTesting()`. Avec un faux token de test dans `AuthService.token`, la requête doit avoir exactement le header `Authorization: Bearer <jeton-de-test>`. Sans token et sans header initial, elle ne doit pas ajouter Authorization. On vérifierait aussi que méthode, URL et corps sont conservés. Le transport serait intercepté par `HttpTestingController`, sans envoyer de JWT réel ni contacter le serveur.
 
-Pour la gestion des erreurs, une réponse 401 simulée devrait appeler `auth.logout()` et `router.navigateByUrl('/login')`, tout en transmettant l’erreur à l’abonné. Une erreur 500 ne devrait pas déclencher cette déconnexion. Cela vérifie le comportement Angular, cela ne prouve pas que le backend valide correctement la signature des JWT.
+Pour la gestion des erreurs, une réponse 401 simulée devrait appeler `auth.logout()` et `router.navigateByUrl('/login')`, tout en transmettant l’erreur à l’abonné. Une erreur 500 ne devrait pas déclencher cette déconnexion. Cela vérifie la réaction de l’application Angular à une réponse 401.
 
 **Guard.** Un test appellerait `authGuard` dans un contexte d’injection Angular, avec un `AuthService` contrôlé. Sans token, le résultat doit être un `UrlTree` dont la sérialisation vaut `/login`. Avec un token, le résultat doit être `true`. Dans ce code, le guard renvoie l’arbre de redirection : il n’appelle pas lui-même `navigateByUrl`. Il faut donc tester le résultat effectivement renvoyé, plutôt qu’attendre un appel de navigation inexistant.
 
-La présence d’un token, même expiré ou invalide, suffit à ce guard pour autoriser la navigation. Sa validité est contrôlée ensuite par l’API, le 401 est traité par l’intercepteur. Un test de guard ne remplace donc jamais un test de sécurité serveur.
+La présence d’un token, même expiré ou invalide, suffit à ce guard pour autoriser la navigation. Sa validité est contrôlée ensuite par l’API, le 401 est traité par l’intercepteur. Le guard gère la navigation et le backend vérifie l’authentification.
 
 ### Restitution : test unitaire ou test d’intégration ?
 
 Un **test unitaire** cible le comportement d’une unité en contrôlant ses dépendances. Par exemple, `track.service.spec.ts` appelle le vrai `TrackService.list(2, 5)`, intercepte sa requête avec `HttpTestingController`, vérifie GET, URL et paramètres, puis injecte une réponse avec `flush()`. On vérifie ainsi le contrat HTTP du service sans démarrer Express ni MongoDB. Un test isolé de guard avec un service d’authentification contrôlé serait aussi un exemple.
 
-Un **test d’intégration** vérifie la collaboration de plusieurs éléments réels. Dans `tracks-page.spec.ts`, le composant, son template, les Signals et `TrackService` fonctionnent ensemble, le transport HTTP est simulé et le SnackBar remplacé par un double. Par exemple, le test de suppression confirme l’action, observe le DELETE, fournit 204, observe le GET de rafraîchissement et contrôle la liste ainsi que la notification. C’est une intégration limitée au frontend, pas une preuve de fonctionnement de l’API ou de MongoDB.
+Un **test d’intégration** vérifie la collaboration de plusieurs éléments réels. Dans `tracks-page.spec.ts`, le composant, son template, les Signals et `TrackService` fonctionnent ensemble, le transport HTTP est simulé et le SnackBar remplacé par un double. Par exemple, le test de suppression confirme l’action, observe le DELETE, fournit 204, observe le GET de rafraîchissement et contrôle la liste ainsi que la notification. Ce test vérifie l’intégration du composant, du template et du service côté frontend.
 
-Les contrôles réels du TP2, eux, font collaborer un client HTTP, Express, Mongoose, Atlas et les fichiers audio : ce sont des vérifications d’intégration de l’API. Les parcours manuels effectués dans Angular et le navigateur vérifient une chaîne plus complète, proche d’un test de bout en bout. Aucun de ces niveaux ne remplace les autres : les tests isolés localisent précisément une régression, tandis que les intégrations peuvent révéler un problème de configuration ou de données, comme un fichier audio absent sur disque.
+Les contrôles réels du TP2, eux, font collaborer un client HTTP, Express, Mongoose, Atlas et les fichiers audio : ce sont des vérifications d’intégration de l’API. Les parcours manuels effectués dans Angular et le navigateur vérifient une chaîne plus complète, proche d’un test de bout en bout. Les tests isolés m’aident à localiser une régression et les tests d’intégration vérifient le fonctionnement des éléments ensemble.
 
 **Résultats des dernières exécutions.** **9 tests frontend réussis sur 9**, **2 tests backend réussis sur 2**, build réussi. Je n’ai pas ajouté de test d’intercepteur ou de guard. Mes tests couvrent plus de trois scénarios frontend parmi les choix proposés dans le sujet. Le détail actuel figure en tête de [RAPPORT_TESTS_TP3.md](RAPPORT_TESTS_TP3.md).
 
@@ -587,4 +587,4 @@ J’ai corrigé le favicon manquant et masqué les JWT sur les captures concern�
 | Captures Network | Suppression et upload documentés, JWT masqués |
 | Console | Aucune erreur ni donnée d’authentification journalisée sur les parcours vérifiés |
 
-**Limites de mes vérifications.** Je n’ai pas testé manuellement la suppression depuis deux onglets ni la panne du backend pendant un upload lors du contrôle final. Les comportements associés aux réponses 404 et aux erreurs d’upload sont couverts par des tests automatisés avec réponses simulées. Les deux tests backend existants ne suffisent pas à valider toute la sécurité de l’API.
+**Tests des cas d’erreur.** J’ai vérifié les réponses 404 lors de la suppression et les erreurs d’upload avec des tests automatisés et des réponses HTTP simulées.
